@@ -1,1 +1,262 @@
-Test
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skyframe SMP - Rule the Sky</title>
+<link rel="icon" type="image/png" href="/icon.png">
+<style>
+:root {
+  --primary: #7c3aed;
+  --primary-light: #a855f7;
+  --bg-dark: #141018;
+  --bg-light: #1e1525;
+  --text: #f5f4fb;
+  --muted: #bdb9ce;
+  --radius: 12px;
+  --shadow: 0 6px 25px rgba(0,0,0,0.35);
+  --accent-gradient: linear-gradient(90deg, var(--primary), var(--primary-light));
+}
+
+/* Reset */
+* {margin:0;padding:0;box-sizing:border-box;}
+html, body {height:100%; font-family: Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial; line-height:1.5; background: var(--bg-dark); color: var(--text); -webkit-font-smoothing: antialiased;}
+
+/* Navbar */
+nav {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 8%;
+  background: var(--bg-light);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top:0;
+  z-index:100;
+}
+nav a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+  margin: 0 10px;
+  transition: color 0.2s;
+}
+nav a:hover { color: var(--primary-light); }
+
+/* Hero */
+header {
+  text-align:center;
+  margin:30px auto 40px;
+  padding:60px 20px;
+  background: var(--accent-gradient);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  color:#fff;
+}
+header h1 { font-size:3rem; margin-bottom:8px; }
+header h2 { font-weight:400; opacity:0.95; font-size:1.5rem; }
+header h3 { font-weight:300; font-size:1.1rem; margin-top:6px; }
+
+/* Cards */
+.card {
+  background: var(--bg-light);
+  border-radius: var(--radius);
+  padding:20px;
+  box-shadow: var(--shadow);
+  border:1px solid rgba(255,255,255,0.05);
+  transition: transform 0.2s;
+}
+.card:hover { transform: translateY(-4px); }
+
+/* Status Card */
+.status-box {
+  max-width: 600px;
+  margin:20px auto;
+  text-align:center;
+  padding:25px;
+}
+.status { font-weight:700; margin-bottom:10px; font-size:1.3rem; }
+.online { color:#7aff81; }
+.offline { color:#ff6b6b; }
+#detailsDiv { color: var(--muted); font-size:0.9rem; margin-top:6px; }
+
+/* IP Box */
+.ip-box {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.ip-box .ip {
+  background: var(--bg-dark);
+  padding:10px 16px;
+  border-radius: var(--radius);
+  font-weight:600;
+  color: var(--text);
+}
+button, .btn {
+  border:none;
+  background: var(--accent-gradient);
+  color:white;
+  font-weight:600;
+  border-radius: var(--radius);
+  padding:10px 20px;
+  cursor:pointer;
+  transition: transform 0.15s, opacity 0.2s;
+}
+button:hover, .btn:hover { transform: translateY(-2px); opacity:0.9; }
+
+/* Info Panels */
+.info-panels {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap:25px;
+  max-width:1100px;
+  margin:40px auto;
+  padding:0 20px;
+}
+.panel {
+  padding:20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border:1px solid rgba(255,255,255,0.05);
+  transition: transform 0.2s;
+}
+.panel:hover { transform: translateY(-4px); }
+.panel h3 { margin-bottom:10px; font-size:1.4rem; color: var(--primary-light);}
+.panel p { color: var(--muted); font-size:0.95rem; line-height:1.5; }
+
+/* Footer */
+footer {
+  text-align:center;
+  margin-top:50px;
+  padding:25px 10px;
+  font-size:0.9rem;
+  color: var(--muted);
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+/* Responsive */
+@media(max-width:720px){
+  nav { flex-direction:column; gap:10px; }
+  header { padding:40px 12px; }
+  .info-panels { grid-template-columns:1fr; }
+  .ip-box { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <div>
+    <a href="/">Home</a>
+    <a href="https://discord.gg/GFsrYZqEGh">Discord</a>
+  </div>
+  <div>
+    <a href="/store">Store</a>
+    <a href="https://topeaglerservers.com/vote/f2dafc2f">Vote</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header>
+  <h1>Skyframe SMP</h1>
+  <h2>Rule the Sky</h2>
+  <h3>An Eaglercraft 1.8.8 Server</h3>
+</header>
+
+<!-- IP & Status -->
+<div class="ip-box card">
+  <span class="ip" id="server-ip">IP: minecraft.emortron.me</span>
+  <button onclick="copyIP()" id="copyIP">Copy IP</button>
+  <a class="btn" href="https://eaglercraft.com/mc/1.8.8-wasm/" target="_blank">Play Now ↗</a>
+</div>
+
+<section class="status-box card">
+  <div id="status" class="status">Server is most likely Online.</div>
+  <div id="detailsDiv">(Checking...)</div>
+</section>
+
+<!-- Info Panels -->
+<section class="info-panels">
+  <div class="panel card">
+    <h3>Store</h3>
+    <p>Support Skyframe SMP by buying ranks and crates!<br><br>
+    <a class="btn" href="https://emortron.me/store" target="_blank">Shop Now ↗</a></p>
+  </div>
+
+  <div class="panel card">
+    <h3>About the Server</h3>
+    <p>Skyframe SMP is an Eaglercraft 1.8.8 server built for fun and community. Currently offering survival modes for adventure and creativity.</p>
+  </div>
+
+  <div class="panel card">
+    <h3>Game Modes</h3>
+    <p><strong>Survival:</strong> Classic play with a twist.<br>
+    <s>Lifesteal:</s> Every kill grants hearts.<br>
+    <s>Skyblock:</s> Expand your island to greatness.</p>
+  </div>
+
+  <div class="panel card">
+    <h3>Vote</h3>
+    <p>Help Skyframe SMP grow by voting! Earn rewards and exclusive perks.<br><br>
+    <a class="btn" href="https://topeaglerservers.com/vote/f2dafc2f" target="_blank">Vote Now ↗</a></p>
+  </div>
+
+  <div class="panel card">
+    <h3>Questions?</h3>
+    <p>Join our Discord server for help, info, and events.<br><br>
+    <a class="btn" href="https://discord.gg/GFsrYZqEGh" target="_blank">Discord ↗</a></p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  &copy; 2025 Skyframe SMP — All Rights Reserved.
+</footer>
+
+<script>
+function copyIP() {
+  const button = document.getElementById("copyIP");
+  navigator.clipboard.writeText("minecraft.emortron.me");
+  button.textContent = "✓";
+  setTimeout(() => button.textContent = "Copy IP", 800);
+}
+
+async function fetchStatus() {
+  const url = "https://endpoint.emortron.me/status";
+  try {
+    const resp = await fetch(url);
+    if(!resp.ok) throw new Error("Network error");
+    const data = await resp.json();
+    const server = data.server ?? {};
+    const online = server.online ?? false;
+    const players = server.players?.online ?? "N/A";
+    const maxPlayers = server.players?.max ?? "N/A";
+    const ping = server.ping?.time ?? "N/A";
+    const lastChecked = server.lastChecked ? new Date(server.lastChecked).toLocaleString() : "N/A";
+
+    document.getElementById("status").innerHTML = online 
+      ? `<span class="online">● Online</span>` 
+      : `<span class="offline">● Offline</span>`;
+
+    document.getElementById("detailsDiv").innerHTML = `
+      <p><strong>Players:</strong> ${players} / ${maxPlayers}</p>
+      <p><strong>Ping:</strong> ${ping} ms</p>
+      <p><small>Last Checked: ${lastChecked}</small></p>
+    `;
+  } catch {
+    document.getElementById("status").innerHTML = '<span class="offline">● Error fetching data</span>';
+    document.getElementById("detailsDiv").textContent = "Could not load server info, please try again later.";
+  }
+}
+fetchStatus();
+setInterval(fetchStatus, 30000);
+</script>
+
+</body>
+</html>

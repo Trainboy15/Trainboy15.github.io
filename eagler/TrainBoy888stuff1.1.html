@@ -1,57 +1,67 @@
 <!DOCTYPE html>
 <html style="width:100%;height:100%;background-color:black;">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
-		<meta name="description" content="Play minecraft 1.12 in your browser" />
-		<meta name="keywords" content="eaglercraft, minecraft, 1.12, 1.12.2" />
-		<title>EaglercraftX 1.12 WASM-GC</title>
-		<meta property="og:locale" content="en-US" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="Eaglercraft 1.12 WASM" />
-		<meta property="og:description" content="Play minecraft 1.12 in your browser" />
-		<meta property="og:image" content="https://topeaglerservers.com/_next/image?url=%2Fapi%2Fpublic%2Fservers%2Ff2dafc2f%2Ficon.png%3Fq%3D50%26v%3D20251113233450&w=256&q=75" />
-		<link type="image/png" rel="shortcut icon" href="https://topeaglerservers.com/_next/image?url=%2Fapi%2Fpublic%2Fservers%2Ff2dafc2f%2Ficon.png%3Fq%3D50%26v%3D20251113233450&w=256&q=75" />
-		<script type="text/javascript" src="bootstrap.js"></script>
-		<script type="text/javascript">
-			"use strict";
-			window.addEventListener("load", function() {
-				if(false) {
-					alert("HTTP please, do not open this file locally, run a local HTTP server and load it via HTTP");
-				}else {
-					
-					// %%%%%%%%% launch options %%%%%%%%%%%%
-					
-					var relayId = Math.floor(Math.random() * 3);
-					window.eaglercraftXOpts = {
-						demoMode: false,
-						container: "game_frame",
-						assetsURI: "assets.epw",
-						worldsDB: "worlds",
-						servers: [
-							{ addr: "wss://minecraft.emortron.me", name: "SkyFrameSMP" }
-						],
-						relays: [
-							{ addr: "wss://relay.deev.is/", comment: "lax1dude relay #1", primary: relayId == 0 },
-							{ addr: "wss://relay.lax1dude.net/", comment: "lax1dude relay #2", primary: relayId == 1 },
-							{ addr: "wss://relay.shhnowisnottheti.me/", comment: "ayunami relay #1", primary: relayId == 2 }
-						]
-					};
-					
-					// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-					
-					var q = window.location.search;
-					if((typeof q === "string") && q[0] === "?" && (typeof window.URLSearchParams !== "undefined")) {
-						q = new window.URLSearchParams(q);
-						var s = q.get("server");
-						if(s) window.eaglercraftXOpts.joinServer = s;
-					}
-					
-					main();
-					
-				}
-			});
-		</script>
-	</head>
-	<body style="margin:0px;width:100%;height:100%;overflow:hidden;background-color:black;" id="game_frame"></body>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Play minecraft 1.12 in your browser" />
+    <meta name="keywords" content="eaglercraft, minecraft, 1.12, 1.12.2" />
+    <title>EaglercraftX 1.12 WASM-GC</title>
+
+    <meta property="og:image" content="https://topeaglerservers.com/_next/image?url=%2Fapi%2Fpublic%2Fservers%2Ff2dafc2f%2Ficon.png%3Fq%3D50%26v%3D20251113233450&w=256&q=75" />
+    <link rel="shortcut icon" href="https://topeaglerservers.com/_next/image?url=%2Fapi%2Fpublic%2Fservers%2Ff2dafc2f%2Ficon.png%3Fq%3D50%26v%3D20251113233450&w=256&q=75" />
+</head>
+
+<body style="margin:0;width:100%;height:100%;overflow:hidden;background-color:black;" id="game_frame">
+</body>
+
+<script>
+"use strict";
+
+window.addEventListener("load", function() {
+    // You cannot check window.location.host() like this
+    if(window.location.protocol === "file:") {
+        alert("Open this page using a local HTTP server, not a file:// URL");
+        return;
+    }
+
+    // %%%%%%%%% launch options %%%%%%%%%%%%
+
+    var relayId = Math.floor(Math.random() * 3);
+
+    window.eaglercraftXOpts = {
+        demoMode: false,
+        container: "game_frame",
+        assetsURI: "assets.epw",     // MUST exist
+        worldsDB: "worlds",
+        servers: [
+            { addr: "wss://minecraft.emortron.me", name: "SkyFrameSMP" }
+        ],
+        relays: [
+            { addr: "wss://relay.deev.is/", comment: "lax1dude relay #1", primary: relayId == 0 },
+            { addr: "wss://relay.lax1dude.net/", comment: "lax1dude relay #2", primary: relayId == 1 },
+            { addr: "wss://relay.shhnowisnottheti.me/", comment: "ayunami relay #1", primary: relayId == 2 }
+        ]
+    };
+
+    // Query ?server=serveraddress
+    const query = new URLSearchParams(window.location.search);
+    const s = query.get("server");
+    if(s) window.eaglercraftXOpts.joinServer = s;
+});
+</script>
+
+<!-- BOOTSTRAP MUST COME LAST -->
+<script src="bootstrap.js"></script>
+
+<script>
+    // Start loader *AFTER* bootstrap.js is loaded
+    window.addEventListener("load", () => {
+        if (typeof window.main === "function") {
+            window.main();
+        } else {
+            alert("bootstrap.js failed to load main()");
+        }
+    });
+</script>
+
 </html>

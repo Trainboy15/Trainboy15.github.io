@@ -76,7 +76,7 @@
     const h2 = document.createElement('h2'); h2.textContent = message;
     h2.style.color = "#AA0000"; h2.style.padding = "25px"; h2.style.fontFamily = "sans-serif"; h2.style.marginBlock = "0px";
     containerEl.appendChild(h2);
-    const h4 = document.createElement('h4'); h4.textContent = "Try again later";
+    const h4 = document.createElement('h4'); h4.textContent = "An error occurred";
     h4.style.color = "#AA0000"; h4.style.padding = "25px"; h4.style.fontFamily = "sans-serif"; h4.style.marginBlock = "0px";
     containerEl.style.backgroundColor = "white"; containerEl.appendChild(h4);
   }
@@ -141,7 +141,7 @@
       eaglercraftXOpts: optsCopy,
       theEPWFileBuffer: epwBuffer,
       loaderWASMURL: loaderWasmBlobURL,
-      splashURL: null  // no splash
+      splashURL: "https://topeaglerservers.com/_next/image?url=%2Fapi%2Fpublic%2Fservers%2Ff2dafc2f%2Ficon.png%3Fq%3D50%26v%3D20251113233450&w=96&q=75"
     };
 
     info("Appending loader.js...");

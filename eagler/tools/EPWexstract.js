@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const epwPath = path.join(__dirname, "assets.epw"); // your EPW file
-const outDir = path.join(__dirname, "epw_extract");
+const outDir = path("/workspaces/Trainboy15.github.io/eagler/epw_extract")
 
 if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 

@@ -31,7 +31,7 @@ window.addEventListener("load", function() {
     window.eaglercraftXOpts = {
         demoMode: false,
         container: "game_frame",
-        assetsURI: "test.epw",     // MUST exist
+        assetsURI: prompt("Enter the EPW URI: (test.epw or assets.epw)"),     // MUST exist
         worldsDB: "worlds",
         servers: [
             { addr: "wss://minecraft.emortron.me", name: "SkyFrameSMP" }

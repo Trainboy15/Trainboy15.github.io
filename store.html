@@ -199,39 +199,128 @@ html, body {height:100%; font-family: Inter, "Segoe UI", system-ui, -apple-syste
 
 <script>
 /* ========= STORE DATA =========
-         Keep IDs and minimal info here. Images are guessed from name (like before).
-         You may extend price, stock, variants, etc.
-      */
-      const storeData = {
-        "All": [
-          { id:"explorer", name:"Explorer Rank", price:1.99, description:"- Priority Queue (beta)\n- 7 homes (+1)", tag:"Rank" },
-          { id:"adventurer", name:"Adventurer Rank", price:2.99, description:"- Extra claim slots\n- Cosmetic tag", tag:"Rank" },
-          { id:"warrior", name:"Warrior Rank", price:4.00, description:"- PvP perks\n- Exclusive kit", tag:"Rank" },
-          { id:"legend", name:"Legend Rank", price:5.99, description:"- Serverwide recognition\n- Extra perks", tag:"Rank" },
-          { id:"explorercrate", name:"Explorer Crate", price:0.99, description:"Chance for resources & cosmetics", tag:"Crate" },
-          { id:"hypercrate", name:"Hyper Crate", price:2.99, description:"High-tier rewards", tag:"Crate" },
-          { id:"tuff", name:"[TUFF] Chat sufix", price:0.99, description:"Appends [TUFF] to your username in chat and tablist.", tag:"Tag" },
-            { id:"cosmic", name:"[COSMIC] Chat sufix", price:0.99, description:"Appends [COSMIC to your username in chat and tablist.", tag:"Tag" },
-          { id:"ember", name:"[EMBER] Chat sufix", price:0.99, description:"Appends [EMBER] to your username in chat and tablist.", tag:"Tag" },
-          { id:"void", name:"[VOID] Chat sufix", price:0.99, description:"Appends [VOID] to your username in chat and tablist.", tag:"Tag" }
-        ],
-        "Survival": [
-          { id:"explorer", name:"Explorer Rank", price:1.99, description:"- Priority Queue (beta)\n- 7 homes (+1)", tag:"Rank" },
-          { id:"adventurer", name:"Adventurer Rank", price:2.99, description:"- Extra claim slots\n- Cosmetic tag", tag:"Rank" },
-          { id:"warrior", name:"Warrior Rank", price:4.00, description:"- PvP perks\n- Exclusive kit", tag:"Rank" },
-          { id:"legend", name:"Legend Rank", price:5.99, description:"- Serverwide recognition\n- Extra perks", tag:"Rank" },
-        ],
-        "Crates": [
-          { id:"explorercrate", name:"Explorer Crate", price:0.99, description:"Chance for resources & cosmetics", tag:"Crate" },
-          { id:"hypercrate", name:"Hyper Crate", price:2.99, description:"High-tier rewards", tag:"Crate" }
-        ],
-        "Chat": [
-          { id:"tuff", name:"[TUFF] Chat sufix", price:0.99, description:"Appends [TUFF] to your username in chat and tablist.", tag:"Tag" },
-          { id:"cosmic", name:"[COSMIC] Chat sufix", price:0.99, description:"Appends [COSMIC to your username in chat and tablist.", tag:"Tag" },
-          { id:"ember", name:"[EMBER] Chat sufix", price:0.99, description:"Appends [EMBER] to your username in chat and tablist.", tag:"Tag" },
-          { id:"void", name:"[VOID] Chat sufix", price:0.99, description:"Appends [VOID] to your username in chat and tablist.", tag:"Tag" }
-        ]
-      };
+   Keep IDs and minimal info here. Images are guessed from name (like before).
+   You may extend price, stock, variants, etc.
+*/
+const storeData = {
+  "All": [
+    { 
+      id:"explorer", 
+      name:"Explorer Rank", 
+      price:1.99, 
+      description:"- Priority Queue (beta)\n- 7 homes (+1)\n- /worth\n- /kit (Explorer kit)\n- /repair\n- /hat\n- /workbench\n- /feed", 
+      tag:"Rank" 
+    },
+    { 
+      id:"adventurer", 
+      name:"Adventurer Rank", 
+      price:2.99, 
+      description:"- Extra claim slots\n- Cosmetic tag\n- Multiple homes (Adventurer tier)\n- /back after death\n- Virtual workbench & anvil\n- /sell & /buy\n- Adventurer kit\n- /repair\n- /feed\n- /extinguish\n- /hat\n- /near\n- /depth", 
+      tag:"Rank" 
+    },
+    { 
+      id:"warrior", 
+      name:"Warrior Rank", 
+      price:4.00, 
+      description:"- PvP perks\n- Exclusive kit\n- Multiple homes (Warrior tier)\n- /repair all\n- /enchant\n- Workbench & anvil\n- Warrior kit\n- /feed & /extinguish\n- /near\n- /sell & /buy\n- /clearinventory\n- Broadcast messages", 
+      tag:"Rank" 
+    },
+    { 
+      id:"champion", 
+      name:"Champion Rank", 
+      price:5.49, 
+      description:"- Multiple homes (Champion tier)\n- /repair & /repair all\n- /enchant\n- Workbench, anvil & grindstone\n- Champion kit\n- /feed & /extinguish\n- /near\n- /fly\n- /sell & /buy\n- /seen\n- /warp other\n- /invsee\n- /clearinventory\n- /speed", 
+      tag:"Rank" 
+    },
+    { 
+      id:"legend", 
+      name:"Legend Rank", 
+      price:5.99, 
+      description:"- Multiple homes (Legend tier)\n- /repair & /repair all\n- /enchant\n- Workbench, anvil & grindstone\n- Legend kit\n- /feed & /extinguish\n- /near\n- /fly & /fly safelogin\n- /sell & /buy\n- /seen\n- /warp other\n- /invsee\n- /clearinventory\n- /speed\n- /heal\n- /tpa others\n- /worth\n- /suicide", 
+      tag:"Rank" 
+    },
+    { 
+      id:"helper", 
+      name:"Helper Rank", 
+      price:7.99, 
+      description:"- Kick & mute players\n- Temp mute & warn\n- Temp ban & unban\n- Jail & unjail\n- Clear others’ inventory\n- /invsee\n- Teleport commands\n- /seen\n- Fly, heal, feed & speed for others\n- View & clear player reports\n- Broadcast messages", 
+      tag:"Rank" 
+    },
+    { 
+      id:"mod", 
+      name:"Mod Rank", 
+      price:12.99, 
+      description:"- All Helper perks\n- Admin GUI access\n- AB plugin full ban management\n- BetterRTP full access\n- Bukkit commands: /plugins, /spigot, /tps, /version\n- ChatFilter bypass\n- DH Admin & DiscordSRV admin\n- EconomyShopGUI full access\n- Essentials full access\n- WorldEdit *", 
+      tag:"Rank" 
+    },
+    { 
+      id:"admin", 
+      name:"Admin Rank", 
+      price:19.99, 
+      description:"- All Mod perks\n- Full Admin GUI\n- BetterRTP *\n- Bukkit * commands\n- ChatFilter bypass *\n- DH Admin full access\n- DiscordSRV full admin\n- EconomyShopGUI full access\n- Essentials full access\n- WorldEdit *\n- Player report *\n- Vanish *", 
+      tag:"Rank" 
+    },
+    { 
+      id:"explorercrate", 
+      name:"Explorer Crate", 
+      price:0.99, 
+      description:"Chance for resources & cosmetics", 
+      tag:"Crate" 
+    },
+    { 
+      id:"hypercrate", 
+      name:"Hyper Crate", 
+      price:2.99, 
+      description:"High-tier rewards", 
+      tag:"Crate" 
+    },
+    { 
+      id:"tuff", 
+      name:"[TUFF] Chat sufix", 
+      price:0.99, 
+      description:"Appends [TUFF] to your username in chat and tablist.", 
+      tag:"Tag" 
+    },
+    { 
+      id:"cosmic", 
+      name:"[COSMIC] Chat sufix", 
+      price:0.99, 
+      description:"Appends [COSMIC] to your username in chat and tablist.", 
+      tag:"Tag" 
+    },
+    { 
+      id:"ember", 
+      name:"[EMBER] Chat sufix", 
+      price:0.99, 
+      description:"Appends [EMBER] to your username in chat and tablist.", 
+      tag:"Tag" 
+    },
+    { 
+      id:"void", 
+      name:"[VOID] Chat sufix", 
+      price:0.99, 
+      description:"Appends [VOID] to your username in chat and tablist.", 
+      tag:"Tag" 
+    }
+  ],
+  "Survival": [
+    { id:"explorer", name:"Explorer Rank", price:1.99, description:"- Priority Queue (beta)\n- 7 homes (+1)\n- /worth\n- /kit (Explorer kit)\n- /repair\n- /hat\n- /workbench\n- /feed", tag:"Rank" },
+    { id:"adventurer", name:"Adventurer Rank", price:2.99, description:"- Extra claim slots\n- Cosmetic tag\n- Multiple homes (Adventurer tier)\n- /back after death\n- Virtual workbench & anvil\n- /sell & /buy\n- Adventurer kit\n- /repair\n- /feed\n- /extinguish\n- /hat\n- /near\n- /depth", tag:"Rank" },
+    { id:"warrior", name:"Warrior Rank", price:4.00, description:"- PvP perks\n- Exclusive kit\n- Multiple homes (Warrior tier)\n- /repair all\n- /enchant\n- Workbench & anvil\n- Warrior kit\n- /feed & /extinguish\n- /near\n- /sell & /buy\n- /clearinventory\n- Broadcast messages", tag:"Rank" },
+    { id:"champion", name:"Champion Rank", price:5.49, description:"- Multiple homes (Champion tier)\n- /repair & /repair all\n- /enchant\n- Workbench, anvil & grindstone\n- Champion kit\n- /feed & /extinguish\n- /near\n- /fly\n- /sell & /buy\n- /seen\n- /warp other\n- /invsee\n- /clearinventory\n- /speed", tag:"Rank" },
+    { id:"legend", name:"Legend Rank", price:5.99, description:"- Multiple homes (Legend tier)\n- /repair & /repair all\n- /enchant\n- Workbench, anvil & grindstone\n- Legend kit\n- /feed & /extinguish\n- /near\n- /fly & /fly safelogin\n- /sell & /buy\n- /seen\n- /warp other\n- /invsee\n- /clearinventory\n- /speed\n- /heal\n- /tpa others\n- /worth\n- /suicide", tag:"Rank" }
+  ],
+  "Crates": [
+    { id:"explorercrate", name:"Explorer Crate", price:0.99, description:"Chance for resources & cosmetics", tag:"Crate" },
+    { id:"hypercrate", name:"Hyper Crate", price:2.99, description:"High-tier rewards", tag:"Crate" }
+  ],
+  "Chat": [
+    { id:"tuff", name:"[TUFF] Chat sufix", price:0.99, description:"Appends [TUFF] to your username in chat and tablist.", tag:"Tag" },
+    { id:"cosmic", name:"[COSMIC] Chat sufix", price:0.99, description:"Appends [COSMIC] to your username in chat and tablist.", tag:"Tag" },
+    { id:"ember", name:"[EMBER] Chat sufix", price:0.99, description:"Appends [EMBER] to your username in chat and tablist.", tag:"Tag" },
+    { id:"void", name:"[VOID] Chat sufix", price:0.99, description:"Appends [VOID] to your username in chat and tablist.", tag:"Tag" }
+  ]
+};
 
       /* Utilities */
       function slugify(text){ return text.toString().toLowerCase().replace(/\s+/g,'_').replace(/[^\w-]/g,''); }

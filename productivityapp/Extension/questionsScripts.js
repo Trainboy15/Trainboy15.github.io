@@ -121,7 +121,7 @@ function updateUserStats(isCorrect) {
 }
 
 function loadQuestions() {
-  fetch("https://api.npoint.io/5048143f6c10c99cbef0")
+  fetch("${SERVER_URL}/questions/all")
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       return res.json();

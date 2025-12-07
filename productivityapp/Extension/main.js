@@ -1,4 +1,4 @@
-const SERVER_URL = 'https://turbo-lamp-wrvgxj7wgxv5256xv-8000.app.github.dev';
+const SERVER_URL = 'https://backend.emortron.me';
 let sessionTimerInterval = null;
 
 function getSessionToken() {
@@ -126,7 +126,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         // Authenticate handler
         authButton.addEventListener('click', () => {
-            window.location.href = 'https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Web/';
+            window.location.href = 'https://emortron.me/productivityapp/Web/';
         });
     }
 });

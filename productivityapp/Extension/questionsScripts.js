@@ -7,7 +7,7 @@ const mainContainer = document.getElementById("mainContainer");
 const feedbackDiv = document.getElementById("feedback");
 const loginBtn = document.getElementById("loginBtn");
 
-const SERVER_URL = 'https://turbo-lamp-wrvgxj7wgxv5256xv-8000.app.github.dev';
+const SERVER_URL = 'https://backend.emortron.me';
 
 let questions = [];
 let currentIndex = 0;
@@ -58,7 +58,7 @@ function checkAuthentication() {
     mainContainer.style.display = 'none';
     
     loginBtn.addEventListener('click', () => {
-      window.location.href = 'https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Web/index.html?redirect=https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Extension/questions.html';
+      window.location.href = 'https://emortron.me/productivityapp/Web?redirect=https://emortron.me/productivityapp/Extension/questions.html';
     });
     return false;
   }
@@ -76,7 +76,7 @@ function checkAuthentication() {
     }
     if (payload.admin == true) {
       alert("Admin's Cannot Access Questions Section!");
-      window.location.href = 'https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Web/';
+      window.location.href = 'https://emortron.me/productivityapp/Web/';
       return false;
     }
     startSessionTimer();
@@ -185,7 +185,7 @@ function loadQuestions() {
           feedbackDiv.style.color = '#155724';
           feedbackDiv.textContent = `Quiz Complete: ${correctCount}/${totalCount} correct`;
           stopSessionTimer();
-          window.location.href = 'https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Web/';
+          window.location.href = 'https://emortron.me/productivityapp/Web/';
         }
       };
     })

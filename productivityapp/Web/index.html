@@ -118,7 +118,7 @@
              document.body.innerHTML = `
                  <div style="display:flex; min-height:100vh; background:#f4f6fa;">
                      <aside style="width:220px; background:#007bff; color:#fff; padding:32px 0; display:flex; flex-direction:column; align-items:center;">
-                         <h2 style="margin-bottom:32px;">Admin</h2>
+                         <h2 style="margin-bottom:32px;">Admin Dashboard</h2>
                          <button class="admin-btn" id="dashboardBtn">Dashboard</button>
                          <button class="admin-btn" id="userMgmtBtn">Users</button>
                          <button class="admin-btn" id="questionsBtn">Questions</button>
@@ -351,40 +351,67 @@
                     <span class="slider round"></span>
                 </label>
                 <style>
-                    .switch {
-                        position: relative;
-                        display: inline-block;
-                        width: 60px;
-                        height: 34px;
-                    }
-                    .switch input { display:none; }
-                    .slider {
-                        position: absolute;
-                        cursor: pointer;
-                        top: 0; left: 0; right: 0; bottom: 0;
-                        background-color: #ccc;
-                        transition: .4s;
-                        border-radius: 34px;
-                    }
-                    .slider:before {
-                        position: absolute;
-                        content: "";
-                        height: 26px;
-                        width: 26px;
-                        left: 4px;
-                        bottom: 4px;
-                        background-color: white;
-                        transition: .4s;
-                        border-radius: 50%;
-                    }
-                    input:checked + .slider { background-color: #2196F3; }
-                    input:checked + .slider:before { transform: translateX(26px); }
+                    /* ---------- Dark Mode Switch ---------- */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #888;
+    transition: 0.4s;
+    border-radius: 34px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #fff;
+    transition: 0.4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+input:checked + .slider {
+    background-color: #007bff; /* blue when active */
+    box-shadow: inset 0 0 5px rgba(0,123,255,0.5);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Optional: add a subtle glow when toggled */
+input:checked + .slider:after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    border-radius: 34px;
+    box-shadow: 0 0 8px rgba(0,123,255,0.6);
+    opacity: 0.6;
+}
+
                 </style>`;
                 // Dark mode toggle logic
                 function applyDarkMode(isDark) {
                     if (isDark) {
                         document.body.style.background = '#181a1b';
-                        document.body.style.color = '#e0e0e0';
+                        document.body.style.color = '';
                         var aside = document.querySelector('aside');
                         var main = document.querySelector('main');
                         if (aside) aside.style.background = '#222';
@@ -668,7 +695,7 @@
                          table += `<tr style='background:#e9ecef;'>
                              <th style='padding:8px; border:1px solid #ccc;'>ID</th>
                              <th style='padding:8px; border:1px solid #ccc;'>Username</th>
-                             <th style='padding:8px; border:1px solid #ccc;'>Time Online</th>
+                             <th style='padding:8px; border:1px solid #ccc;'>Time Online (Min)</th>
                              <th style='padding:8px; border:1px solid #ccc;'>Questions Right</th>
                              <th style='padding:8px; border:1px solid #ccc;'>Admin</th>
                              <th style='padding:8px; border:1px solid #ccc;'>Parent</th>

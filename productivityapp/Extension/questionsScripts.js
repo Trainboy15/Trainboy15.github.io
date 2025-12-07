@@ -121,7 +121,7 @@ function updateUserStats(isCorrect) {
 }
 
 function loadQuestions() {
-  fetch("${SERVER_URL}/questions/all")
+  fetch("https://backend.emortron.me/questions/all")
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       return res.json();

@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>Productivity App</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="style.css">
+   </head>
+   <body>
+      <div class="container">
+         <div id="formArea">
+            <form id="loginForm">
+               <h2>Login</h2>
+               <p>Welcome back! Please login to your account.</p>
+               <div class="msg" id="loginMsg"></div>
+               <label for="loginEmail">Username</label>
+               <input type="text" id="loginEmail" required>
+               <label for="loginPassword">Password</label>
+               <input type="password" id="loginPassword" required>
+               <button type="submit">Login</button>
+               <small>Don't have an account?</small>
+               <a href="#" onclick="switchToSignupTab()">Sign Up</a>
+            </form>
+            <form id="signupForm" style="display:none;">
+               <h2>Sign Up</h2>
+               <p>Start becoming more productive today!</p>
+               <div class="msg" id="signupMsg"></div>
+               <label for="signupEmail">Username</label>
+               <input id="signupEmail" required>
+               <label for="signupPassword">Password</label>
+               <input type="password" id="signupPassword" required>
+               <label for="signupConfirm">Confirm Password</label>
+               <input type="password" id="signupConfirm" required>
+               <button type="submit">Sign Up</button>
+               <small>Already have an account?</small>
+               <a href="#" onclick="switchToLoginTab()">Login</a>
+            </form>
+         </div>
+      </div>
+      <script>
+         // Define SERVER_URL first, before any other code
+         const SERVER_URL = 'https://turbo-lamp-wrvgxj7wgxv5256xv-8000.app.github.dev';
+         
+         // Session token management
+         let sessionToken = null;
+         function setSessionToken(token) {
+             sessionToken = token;
+             localStorage.setItem('sessionToken', token);
+         }
+         function getSessionToken() {
+             return sessionToken || localStorage.getItem('sessionToken');
+         }
+         
+         // Auto-login on page reload if token exists
+         window.addEventListener('DOMContentLoaded', async () => {
+             const token = getSessionToken();
+             if (token) {
+                 // Validate token with server
+                 try {
+                     const response = await fetch(SERVER_URL + '/validate-token', {
+                         method: 'POST',
+                         headers: { 'Authorization': 'Bearer ' + token }
+                     });
+                     const data = await response.json();
+                     if (!data.success) {
+                         localStorage.removeItem('sessionToken');
+                         switchToLoginTab();
+                         return;
+                     }
+                     // Decode token payload (JWT base64 decode)
+                     const payload = JSON.parse(atob(token.split('.')[1]));
+                     const username = payload.uname;
+                     
+                     // Check for redirect query parameter
+                     const urlParams = new URLSearchParams(window.location.search);
+                     const redirect = urlParams.get('redirect');
+                     
+                     if (redirect) {
+                         // Redirect to the specified page
+                         window.location.href = redirect;
+                         return;
+                     }
+                     
+                     if (payload.admin) {
+                         showAdminDashboard(username);
+                     } else if (payload.parent) {
+                         showParentDashboard(username);
+                     } else if (payload.child) {
+                         showChildDashboard(username);
+                     } else {
+                         showUserDashboard(username);
+                     }
+                 } catch (e) {
+                     localStorage.removeItem('sessionToken');
+                     switchToLoginTab();
+                 }
+             }
+         });
+         // Utility functions
+         function switchToLoginTab() {
+             const loginForm = document.getElementById('loginForm');
+             const signupForm = document.getElementById('signupForm');
+             if (loginForm && signupForm) {
+                 loginForm.style.display = '';
+                 signupForm.style.display = 'none';
+             }
+         }
+         function switchToSignupTab() {
+             const loginForm = document.getElementById('loginForm');
+             const signupForm = document.getElementById('signupForm');
+             if (loginForm && signupForm) {
+                 signupForm.style.display = '';
+                 loginForm.style.display = 'none';
+             }
+         }
+         
+         function showAdminDashboard(username) {
+             document.body.innerHTML = `
+                 <div style="display:flex; min-height:100vh; background:#f4f6fa;">
+                     <aside style="width:220px; background:#007bff; color:#fff; padding:32px 0; display:flex; flex-direction:column; align-items:center;">
+                         <h2 style="margin-bottom:32px;">Admin</h2>
+                         <button class="admin-btn" id="dashboardBtn">Dashboard</button>
+                         <button class="admin-btn" id="userMgmtBtn">Users</button>
+                         <button class="admin-btn" id="settingsBtn">Settings</button>
+                         <button class="admin-btn" id="logoutBtn" style="margin-top:auto; background:#d9534f;">Logout</button>
+                     </aside>
+                     <main style="flex:1; padding:48px;">
+                         <div id="adminContent">
+                             <h1 style="color:#007bff; margin-bottom:8px;">Admin Dashboard</h1>
+                             <p style="font-size:16px; color:#666; margin-bottom:32px;">System overview and analytics</p>
+                             <div id="userStats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:24px; margin-bottom:32px;">Loading analytics...</div>
+                             <div id="serverInfo" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:24px;">
+                                 <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                     <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Server Status</div>
+                                     <div id="serverStatus" style='font-size:28px; font-weight:bold; color:#28a745;'>Checking...</div>
+                                 </div>
+                                 <div id="warningsCard" style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor:pointer; transition:box-shadow 0.2s;' onmouseover='this.style.boxShadow="0 4px 16px rgba(0,0,0,0.15)"' onmouseout='this.style.boxShadow="0 2px 8px rgba(0,0,0,0.1)"'>
+                                     <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Warnings</div>
+                                     <div id="serverWarning" style='font-size:28px; font-weight:bold; color:#28a745;'>Checking...</div>
+                                 </div>
+                             </div>
+                         </div>
+                     </main>
+                 </div>
+                 <style>
+                     .admin-btn { width:160px; margin:8px 0; padding:12px; border:none; border-radius:6px; background:#fff; color:#007bff; font-size:16px; cursor:pointer; transition:background 0.2s; }
+                     .admin-btn:hover { background:#e9ecef; }
+                     #logoutBtn { background:#d9534f; color:#fff; }
+                     #logoutBtn:hover { background:#c9302c; }
+                 </style>
+             `;
+             
+             function checkServerStatus() {
+                 fetch(SERVER_URL + '/')
+                     .then(res => res.json())
+                     .then(data => {
+                         if (data.success) {
+                             document.getElementById('serverStatus').textContent = 'Online';
+                             document.getElementById('serverStatus').style.color = '#28a745';
+                         } else {
+                             document.getElementById('serverStatus').textContent = 'Offline';
+                             document.getElementById('serverStatus').style.color = '#dc3545';
+                         }
+                     })
+                     .catch(() => {
+                         document.getElementById('serverStatus').textContent = 'Offline';
+                         document.getElementById('serverStatus').style.color = '#dc3545';
+                     });
+             }
+             
+             function checkForWarnings() {
+                 fetch(SERVER_URL + '/analytics/warnings', {
+                     headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+                 })
+                     .then(res => res.json())
+                     .then(data => {
+                         if (data.success && data.warnings && data.warnings.length > 0) {
+                             document.getElementById('serverWarning').textContent = data.warnings.length;
+                             document.getElementById('serverWarning').style.color = '#ffc107';
+                             
+                             // Add click handler to show warnings
+                             document.getElementById('warningsCard').onclick = () => {
+                                 showWarningsPage(data.warnings);
+                             };
+                         } else {
+                             document.getElementById('serverWarning').textContent = 'None';
+                             document.getElementById('serverWarning').style.color = '#28a745';
+                             document.getElementById('warningsCard').onclick = null;
+                             document.getElementById('warningsCard').style.cursor = 'default';
+                         }
+                     })
+                     .catch(() => {
+                         document.getElementById('serverWarning').textContent = 'Error';
+                         document.getElementById('serverWarning').style.color = '#dc3545';
+                         document.getElementById('warningsCard').onclick = null;
+                         document.getElementById('warningsCard').style.cursor = 'default';
+                     });
+             }
+             
+             function showWarningsPage(warnings) {
+                 document.getElementById('adminContent').innerHTML = `
+                     <h2 style="color:#ffc107; margin-bottom:8px;"><span style="cursor:pointer;" onclick="document.getElementById('dashboardBtn').click();">← </span>User Warnings</h2>
+                     <p style="font-size:16px; color:#666; margin-bottom:24px;">Users with data inconsistencies or role conflicts</p>
+                     <div style="background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                         <table style="width:100%; border-collapse:collapse;">
+                             <thead>
+                                 <tr style="border-bottom:2px solid #e0e0e0;">
+                                     <th style="padding:12px; text-align:left; color:#666;">Username</th>
+                                     <th style="padding:12px; text-align:left; color:#666;">Time Online</th>
+                                     <th style="padding:12px; text-align:left; color:#666;">Questions Right</th>
+                                     <th style="padding:12px; text-align:left; color:#666;">Admin</th>
+                                     <th style="padding:12px; text-align:left; color:#666;">Child</th>
+                                     <th style="padding:12px; text-align:left; color:#666;">Parent</th>
+                                     <th style="padding:12px; text-align:left; color:#666;">User ID</th>
+                                     <th style="padding:12px; text-align:left; color:#666;">Reason</th>
+                                     <th style="padding:12px; text-align:left; color:#666;">Action</th>
+                                 </tr>
+                             </thead>
+                             <tbody id="warningsTableBody">
+                             </tbody>
+                         </table>
+                     </div>
+                 `;
+                 
+                 const tbody = document.getElementById('warningsTableBody');
+                 warnings.forEach(user => {
+                     const row = document.createElement('tr');
+                     row.style.borderBottom = '1px solid #f0f0f0';
+                     
+                     let warningReason = [];
+                     let adminColor = '#333';
+                     let childColor = '#333';
+                     let parentColor = '#333';
+                     
+                     if (user.time_online < 0) warningReason.push('Negative time online');
+                     if (user.questions_right < 0) warningReason.push('Negative questions right');
+                     if (user.child && user.parent) {
+                         warningReason.push('Child & Parent conflict'); 
+                         childColor = '#dc3545';
+                         parentColor = '#dc3545';
+                     }
+                     if (user.admin && user.parent) { 
+                        warningReason.push('Admin & Parent conflict'); 
+                        adminColor = '#dc3545';
+                        parentColor = '#dc3545';
+                     }
+                     if (user.admin && user.child) { 
+                        warningReason.push('Admin & Child conflict'); 
+                        adminColor = '#dc3545';
+                        childColor = '#dc3545';
+                     }
+                     if (new Date(user.created_at) > new Date(user.updated_at)) {
+                         warningReason.push('Created after updated');
+                     }
+                     
+                     row.innerHTML = `
+                         <td style="padding:12px; font-weight:500;">${user.uname}</td>
+                         <td style="padding:12px;">${user.time_online} min</td>
+                         <td style="padding:12px;">${user.questions_right}</td>
+                         <td style="padding:12px; color:${adminColor}; font-weight:bold;">${user.admin ? 'Yes' : 'No'}</td>
+                         <td style="padding:12px; color:${childColor}; font-weight:bold;">${user.child ? 'Yes' : 'No'}</td>
+                         <td style="padding:12px; color:${parentColor}; font-weight:bold;">${user.parent ? 'Yes' : 'No'}</td>
+                         <td style="padding:12px;">#${user.id}</td>
+                         <td style="padding:12px; color:#ffc107; font-size:14px;">${warningReason.join(', ')}</td>
+                         <td style="padding:12px;">
+                             ${new Date(user.created_at) > new Date(user.updated_at) ? `<button onclick="fixTimestamp(${user.id}, '${user.updated_at}')" style="background:#28a745; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:12px; font-weight:600;">Fix</button>` : ''}
+                         </td>
+                     `;
+                     tbody.appendChild(row);
+                 });
+             }
+             
+             // Function to fix timestamp inconsistency
+             async function fixTimestamp(userId, correctedDate) {
+                 try {
+                     const token = getSessionToken();
+                     const response = await fetch(`${SERVER_URL}/analytics/edit-column/${userId}`, {
+                         method: 'PATCH',
+                         headers: {
+                             'Content-Type': 'application/json',
+                             'Authorization': `Bearer ${token}`
+                         },
+                         body: JSON.stringify({
+                             column: 'created_at',
+                             value: correctedDate
+                         })
+                     });
+                     
+                     if (!response.ok) {
+                         const error = await response.json();
+                         throw new Error(error.message || 'Failed to fix timestamp');
+                     }
+                     
+                     // Refresh warnings list
+                     checkForWarnings();
+                     alert('Timestamp fixed successfully!');
+                 } catch (error) {
+                     console.error('Error fixing timestamp:', error);
+                     alert('Error fixing timestamp: ' + error.message);
+                 }
+             }
+             
+             // Always inject modal HTML for metadata editor
+             if (!document.getElementById('editMetaModal')) {
+                 const modalDiv = document.createElement('div');
+                 modalDiv.id = 'editMetaModal';
+                 modalDiv.style.display = 'none';
+                 modalDiv.innerHTML = `
+                     <div id='editMetaBackdrop' style='position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:1000;'></div>
+                     <div style='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:32px 24px;border-radius:8px;box-shadow:0 2px 16px rgba(0,0,0,0.18);z-index:1001;min-width:320px;'>
+                         <h2>Edit User Metadata</h2>
+                         <form id='editMetaForm'>
+                             <input type='hidden' id='editUserId'>
+                             <label>Username</label>
+                             <input type='text' id='editUserName' required style='width:100%;margin-bottom:12px;'>
+                             <label>Time Online (minutes)</label>
+                             <input type='number' id='editTimeOnline' min='0' required style='width:100%;margin-bottom:12px;'>
+                             <label>Questions Right</label>
+                             <input type='number' id='editQuestionsRight' min='0' required style='width:100%;margin-bottom:12px;'>
+                             <label><input type='checkbox' id='editAdmin'> Admin</label>
+                             <label><input type='checkbox' id='editParent'> Parent</label>
+                             <label><input type='checkbox' id='editChild'> Child</label>
+                             <label>Change Password</label>
+                             <input type='password' id='editUserPassword' placeholder='Leave blank to keep current' style='width:100%;margin-bottom:12px;'>
+                             <div style='display:flex;justify-content:flex-end;gap:12px;'>
+                                 <button type='button' id='cancelEditMeta' style='background:#ccc;color:#333;padding:8px 18px;border:none;border-radius:4px;'>Cancel</button>
+                                 <button type='submit' style='background:#007bff;color:#fff;padding:8px 18px;border:none;border-radius:4px;'>Save</button>
+                             </div>
+                         </form>
+                     </div>
+                 `;
+                 document.body.appendChild(modalDiv);
+             }
+             
+             document.getElementById('logoutBtn').onclick = async () => {
+                 try {
+                     await fetch(SERVER_URL + '/logout', {
+                         method: 'POST',
+                         headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+                     });
+                 } catch (e) {}
+                 localStorage.removeItem('sessionToken');
+                 location.reload();
+             };
+             document.getElementById('settingsBtn').onclick = () => {
+                document.getElementById('adminContent').innerHTML = `<h2>Settings</h2>
+                <p>Dark Mode</p>
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider round"></span>
+                </label>
+                <style>
+                    .switch {
+                        position: relative;
+                        display: inline-block;
+                        width: 60px;
+                        height: 34px;
+                    }
+                    .switch input { display:none; }
+                    .slider {
+                        position: absolute;
+                        cursor: pointer;
+                        top: 0; left: 0; right: 0; bottom: 0;
+                        background-color: #ccc;
+                        transition: .4s;
+                        border-radius: 34px;
+                    }
+                    .slider:before {
+                        position: absolute;
+                        content: "";
+                        height: 26px;
+                        width: 26px;
+                        left: 4px;
+                        bottom: 4px;
+                        background-color: white;
+                        transition: .4s;
+                        border-radius: 50%;
+                    }
+                    input:checked + .slider { background-color: #2196F3; }
+                    input:checked + .slider:before { transform: translateX(26px); }
+                </style>`;
+                // Dark mode toggle logic
+                function applyDarkMode(isDark) {
+                    if (isDark) {
+                        document.body.style.background = '#181a1b';
+                        document.body.style.color = '#e0e0e0';
+                        var aside = document.querySelector('aside');
+                        var main = document.querySelector('main');
+                        if (aside) aside.style.background = '#222';
+                        if (main) main.style.background = '#23272b';
+                    } else {
+                        document.body.style.background = '#f4f6fa';
+                        document.body.style.color = '';
+                        var aside = document.querySelector('aside');
+                        var main = document.querySelector('main');
+                        if (aside) aside.style.background = '#007bff';
+                        if (main) main.style.background = '';
+                    }
+                }
+                // Set initial state from localStorage
+                setTimeout(function() {
+                    var darkModeToggle = document.getElementById('darkModeToggle');
+                    var isDark = localStorage.getItem('darkMode') === 'true';
+                    darkModeToggle.checked = isDark;
+                    applyDarkMode(isDark);
+                    darkModeToggle.onchange = function() {
+                        localStorage.setItem('darkMode', darkModeToggle.checked);
+                        applyDarkMode(darkModeToggle.checked);
+                    };
+                }, 100);
+             };
+             document.getElementById('userMgmtBtn').onclick = () => {
+                 document.getElementById('adminContent').innerHTML = `
+                     <h2>User Management</h2>
+                     <div id='usersTable' style='max-height:400px; overflow-y:auto;'>Loading users...</div>
+                     <button id='addUserBtn' style='margin-top:16px; background:#28a745; color:#fff; border:none; border-radius:4px; padding:10px 24px; font-size:16px; cursor:pointer;'>Add User</button>
+                 `;
+                 document.getElementById('addUserBtn').onclick = () => {
+                     // Show modal for adding user
+                     document.getElementById('editMetaModal').style.display = 'block';
+                     document.getElementById('editUserId').value = '';
+                     document.getElementById('editUserName').value = '';
+                     document.getElementById('editTimeOnline').value = 0;
+                     document.getElementById('editQuestionsRight').value = 0;
+                     document.getElementById('editAdmin').checked = false;
+                 };
+                 fetchAllUsers();
+             };
+             document.getElementById('dashboardBtn').onclick = () => {
+                 document.getElementById('adminContent').innerHTML = `
+                     <h1 style="color:#007bff; margin-bottom:8px;">Admin Dashboard</h1>
+                     <p style="font-size:16px; color:#666; margin-bottom:32px;">System overview and analytics</p>
+                     <div id="userStats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:24px; margin-bottom:32px;">Loading analytics...</div>
+                     <div id="serverInfo" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:24px;">
+                         <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                             <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Server Status</div>
+                             <div id="serverStatus" style='font-size:28px; font-weight:bold; color:#28a745;'>Checking...</div>
+                         </div>
+                         <div id="warningsCard" style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor:pointer; transition:box-shadow 0.2s;' onmouseover='this.style.boxShadow="0 4px 16px rgba(0,0,0,0.15)"' onmouseout='this.style.boxShadow="0 2px 8px rgba(0,0,0,0.1)"'>
+                             <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Warnings</div>
+                             <div id="serverWarning" style='font-size:28px; font-weight:bold; color:#28a745;'>Checking...</div>
+                         </div>
+                     </div>
+                 `;
+                 fetchUserAnalytics();
+                 checkServerStatus();
+                 checkForWarnings();
+             };
+             
+             function checkServerStatus() {
+                 fetch(SERVER_URL + '/')
+                     .then(res => res.json())
+                     .then(data => {
+                         if (data.success) {
+                             document.getElementById('serverStatus').textContent = 'Online';
+                             document.getElementById('serverStatus').style.color = '#28a745';
+                         } else {
+                             document.getElementById('serverStatus').textContent = 'Offline';
+                             document.getElementById('serverStatus').style.color = '#dc3545';
+                         }
+                     })
+                     .catch(() => {
+                         document.getElementById('serverStatus').textContent = 'Offline';
+                         document.getElementById('serverStatus').style.color = '#dc3545';
+                     });
+             }
+             
+             fetchUserAnalytics();
+             checkServerStatus();
+             checkForWarnings();
+         }
+         
+         function fetchAllUsers() {
+             fetch(SERVER_URL + '/analytics/all-users', {
+                 headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+             })
+                 .then(res => res.json())
+                 .then(data => {
+                     if (data.success && Array.isArray(data.users)) {
+                         let table = `<table style='width:100%; border-collapse:collapse; margin-top:16px;'>`;
+                         table += `<tr style='background:#e9ecef;'>
+                             <th style='padding:8px; border:1px solid #ccc;'>ID</th>
+                             <th style='padding:8px; border:1px solid #ccc;'>Username</th>
+                             <th style='padding:8px; border:1px solid #ccc;'>Time Online</th>
+                             <th style='padding:8px; border:1px solid #ccc;'>Questions Right</th>
+                             <th style='padding:8px; border:1px solid #ccc;'>Admin</th>
+                             <th style='padding:8px; border:1px solid #ccc;'>Parent</th>
+                             <th style='padding:8px; border:1px solid #ccc;'>Child</th>
+                             <th style='padding:8px; border:1px solid #ccc;'>Action</th>
+                         </tr>`;
+                         for (const user of data.users) {
+                             table += `<tr>
+                                 <td style='padding:8px; border:1px solid #ccc;'>${user.id}</td>
+                                 <td style='padding:8px; border:1px solid #ccc;'>${user.uname}</td>
+                                 <td style='padding:8px; border:1px solid #ccc;'>${user.time_online || 0}</td>
+                                 <td style='padding:8px; border:1px solid #ccc;'>${user.questions_right || 0}</td>
+                                 <td style='padding:8px; border:1px solid #ccc;'>${user.admin ? 'Yes' : 'No'}</td>
+                                 <td style='padding:8px; border:1px solid #ccc;'>${user.parent ? 'Yes' : 'No'}</td>
+                                 <td style='padding:8px; border:1px solid #ccc;'>${user.child ? 'Yes' : 'No'}</td>
+                                 <td style='padding:8px; border:1px solid #ccc;'>
+                                     <button class='editMetaDataBtn' data-id='${user.id}' data-uname='${user.uname}' data-time_online='${user.time_online || 0}' data-questions_right='${user.questions_right || 0}' data-admin='${user.admin ? 1 : 0}' data-parent='${user.parent ? 1 : 0}' data-child='${user.child ? 1 : 0}' style='background:#007bff; color:#fff; border:none; border-radius:4px; padding:6px 12px; cursor:pointer; margin-left:8px;'>Edit</button>
+                                     <button class='deleteUserBtn' data-id='${user.id}' style='background:#d9534f; color:#fff; border:none; border-radius:4px; padding:6px 12px; cursor:pointer;'>Delete</button>
+                                 </td>
+                             </tr>`;
+                         }
+                         table += `</table>`;
+                         document.getElementById('usersTable').innerHTML = table;
+                         // Add modal HTML if not present
+                         if (!document.getElementById('editMetaModal')) {
+                             const modalDiv = document.createElement('div');
+                             modalDiv.id = 'editMetaModal';
+                             modalDiv.style.display = 'none';
+                             modalDiv.innerHTML = `
+                                 <div id='editMetaBackdrop' style='position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:1000;'></div>
+                                 <div style='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:32px 24px;border-radius:8px;box-shadow:0 2px 16px rgba(0,0,0,0.18);z-index:1001;min-width:320px;'>
+                                     <h2>Edit User Metadata</h2>
+                                     <form id='editMetaForm'>
+                                         <input type='hidden' id='editUserId'>
+                                         <label>Username</label>
+                                         <input type='text' id='editUserName' required style='width:100%;margin-bottom:12px;'>
+                                         <label>Time Online (minutes)</label>
+                                         <input type='number' id='editTimeOnline' min='0' required style='width:100%;margin-bottom:12px;'>
+                                         <label>Questions Right</label>
+                                         <input type='number' id='editQuestionsRight' min='0' required style='width:100%;margin-bottom:12px;'>
+                                         <label><input type='checkbox' id='editAdmin'> Admin</label>
+                                         <label>Change Password</label>
+                                         <input type='password' id='editUserPassword' placeholder='Leave blank to keep current' style='width:100%;margin-bottom:12px;'>
+                                         <div style='display:flex;justify-content:flex-end;gap:12px;'>
+                                             <button type='button' id='cancelEditMeta' style='background:#ccc;color:#333;padding:8px 18px;border:none;border-radius:4px;'>Cancel</button>
+                                             <button type='submit' style='background:#007bff;color:#fff;padding:8px 18px;border:none;border-radius:4px;'>Save</button>
+                                         </div>
+                                     </form>
+                                 </div>
+                             `;
+                             document.body.appendChild(modalDiv);
+                         }
+                         document.querySelectorAll('.deleteUserBtn').forEach(btn => {
+                             btn.onclick = function() {
+                                 const userId = this.getAttribute('data-id');
+                                 if (confirm('Are you sure you want to delete this user?')) {
+                                     fetch(`${SERVER_URL}/analytics/delete-user/${userId}`, {
+                                         method: 'DELETE',
+                                         headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+                                     })
+                                     .then(res => res.json())
+                                     .then(result => {
+                                         if (result.success) {
+                                             fetchAllUsers();
+                                         } else {
+                                             alert(result.message || 'Failed to delete user.');
+                                         }
+                                     })
+                                     .catch(() => alert('Error deleting user.'));
+                                 }
+                             };
+                         });
+                         document.querySelectorAll('.editMetaDataBtn').forEach(btn => {
+                             btn.onclick = function() {
+                                 // Show modal and populate fields
+                                 document.getElementById('editMetaModal').style.display = 'block';
+                                 document.getElementById('editUserId').value = this.getAttribute('data-id');
+                                 document.getElementById('editUserName').value = this.getAttribute('data-uname');
+                                 document.getElementById('editTimeOnline').value = this.getAttribute('data-time_online');
+                                 document.getElementById('editQuestionsRight').value = this.getAttribute('data-questions_right');
+                                 document.getElementById('editAdmin').checked = this.getAttribute('data-admin') === '1';
+                             };
+                         });
+                         // Modal cancel button
+                         document.getElementById('cancelEditMeta').onclick = function() {
+                             document.getElementById('editMetaModal').style.display = 'none';
+                         };
+                         // Modal backdrop click closes modal
+                         document.getElementById('editMetaBackdrop').onclick = function() {
+                             document.getElementById('editMetaModal').style.display = 'none';
+                         };
+                         // Modal save button (form submit) - handles both edit and add
+                         document.getElementById('editMetaForm').onsubmit = async function(e) {
+                             e.preventDefault();
+                             const userId = document.getElementById('editUserId').value;
+                             const uname = document.getElementById('editUserName').value;
+                             const time_online = document.getElementById('editTimeOnline').value;
+                             const questions_right = document.getElementById('editQuestionsRight').value;
+                             const admin = document.getElementById('editAdmin').checked ? 1 : 0;
+                             const pass = document.getElementById('editUserPassword').value;
+                             const parent = document.getElementById('editParent').checked ? 1 : 0;
+                             const child = document.getElementById('editChild').checked ? 1 : 0;
+                             try {
+                                 let response, result;
+                                 if (userId) {
+                                     // Edit existing user
+                                     const payload = { uname, time_online, questions_right, admin, parent, child };
+                                     if (pass) payload.pass = pass;
+                                     response = await fetch(`${SERVER_URL}/analytics/update-user/${userId}`, {
+                                         method: 'PUT',
+                                         headers: {
+                                             'Content-Type': 'application/json',
+                                             'Authorization': 'Bearer ' + getSessionToken()
+                                         },
+                                         body: JSON.stringify(payload)
+                                     });
+                                 } else {
+                                     // Add new user
+                                     response = await fetch(SERVER_URL + '/analytics/add-user', {
+                                         method: 'POST',
+                                         headers: {
+                                             'Content-Type': 'application/json',
+                                             'Authorization': 'Bearer ' + getSessionToken()
+                                         },
+                                         body: JSON.stringify({ uname, time_online, questions_right, admin, pass })
+                                     });
+                                 }
+                                 result = await response.json();
+                                 if (result.success) {
+                                     document.getElementById('editMetaModal').style.display = 'none';
+                                     fetchAllUsers();
+                                 } else {
+                                     alert(result.message || (userId ? 'Failed to update user.' : 'Failed to add user.'));
+                                 }
+                             } catch (err) {
+                                 alert(userId ? 'Error updating user.' : 'Error adding user.');
+                             }
+                         };
+                     } else {
+                         document.getElementById('usersTable').textContent = 'Could not load users.';
+                     }
+                 })
+                 .catch(() => {
+                     document.getElementById('usersTable').textContent = 'Error loading users.';
+                 });
+         }
+         
+         function fetchUserAnalytics() {
+             fetch(SERVER_URL + '/analytics/users', {
+                 headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+             })
+                 .then(res => res.json())
+                 .then(data => {
+                     if (data.success) {
+                         // Also fetch all users to calculate aggregate stats
+                         fetch(SERVER_URL + '/analytics/all-users', {
+                             headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+                         })
+                             .then(res => res.json())
+                             .then(usersData => {
+                                 if (usersData.success && Array.isArray(usersData.users)) {
+                                     const totalTime = usersData.users.reduce((sum, u) => sum + (u.time_online || 0), 0);
+                                     const totalQuestions = usersData.users.reduce((sum, u) => sum + (u.questions_right || 0), 0);
+                                     const hours = Math.floor(totalTime / 60);
+                                     const minutes = totalTime % 60;
+                                     const timeDisplay = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+                                     const adminCount = usersData.users.filter(u => u.admin).length;
+                                     const parentCount = usersData.users.filter(u => u.parent).length;
+                                     
+                                     document.getElementById('userStats').innerHTML = `
+                                         <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                             <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Total Users</div>
+                                             <div style='font-size:32px; font-weight:bold; color:#007bff;'>${data.totalUsers}</div>
+                                             <div style='font-size:13px; color:#999; margin-top:4px;'>${adminCount} admins, ${parentCount} parents</div>
+                                         </div>
+                                         <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                             <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Total Time Online</div>
+                                             <div style='font-size:32px; font-weight:bold; color:#17a2b8;'>${timeDisplay}</div>
+                                             <div style='font-size:13px; color:#999; margin-top:4px;'>${totalTime} total minutes</div>
+                                         </div>
+                                         <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                             <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Questions Answered</div>
+                                             <div style='font-size:32px; font-weight:bold; color:#28a745;'>${totalQuestions}</div>
+                                             <div style='font-size:13px; color:#999; margin-top:4px;'>Correctly answered</div>
+                                         </div>
+                                     `;
+                                 } else {
+                                     document.getElementById('userStats').innerHTML = `
+                                         <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                             <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Total Users</div>
+                                             <div style='font-size:32px; font-weight:bold; color:#007bff;'>${data.totalUsers}</div>
+                                         </div>
+                                     `;
+                                 }
+                             })
+                             .catch(() => {
+                                 document.getElementById('userStats').innerHTML = `
+                                     <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                         <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Total Users</div>
+                                         <div style='font-size:32px; font-weight:bold; color:#007bff;'>${data.totalUsers}</div>
+                                     </div>
+                                 `;
+                             });
+                     } else {
+                         document.getElementById('userStats').textContent = 'Could not load user analytics.';
+                     }
+                 })
+                 .catch(() => {
+                     document.getElementById('userStats').textContent = 'Error loading analytics.';
+                 });
+         }
+         
+         function showParentDashboard(username) {
+             document.body.innerHTML = `
+                 <div style="display:flex; min-height:100vh; background:#f4f6fa;">
+                     <aside style="width:220px; background:#007bff; color:#fff; padding:32px 0; display:flex; flex-direction:column; align-items:center;">
+                         <h2 style="margin-bottom:32px;">${username}</h2>
+                         <button class="user-btn" id="dashboardBtn">Dashboard</button>
+                         <button class="user-btn" id="profileBtn">Profile</button>
+                         <button class="user-btn" id="questionBtn">Questions</button>
+                         <button class="user-btn" id="settingsBtn">Settings</button>
+                         <button class="user-btn" id="logoutBtn" style="margin-top:auto; background:#d9534f;">Logout</button>
+                     </aside>
+                     <main style="flex:1; padding:48px;">
+                         <div id="userContent">
+                             <h1 style="color:#007bff;">Welcome, ${username}</h1>
+                             <p style="font-size:18px;">This is your parent dashboard.</p>
+                             <div id="userData" style="margin-top:24px; font-size:17px; color:#444;">Loading your data...</div>
+                         </div>
+                     </main>
+                 </div>
+                 <style>
+                     .user-btn { width:160px; margin:8px 0; padding:12px; border:none; border-radius:6px; background:#fff; color:#007bff; font-size:16px; cursor:pointer; transition:background 0.2s; }
+                     .user-btn:hover { background:#e9ecef; }
+                     #logoutBtn { background:#d9534f; color:#fff; }
+                     #logoutBtn:hover { background:#c9302c; }
+                 </style>
+             `;
+             document.getElementById('logoutBtn').onclick = async () => {
+                 try {
+                     await fetch(SERVER_URL + '/logout', {
+                         method: 'POST',
+                         headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+                     });
+                 } catch (e) {}
+                 localStorage.removeItem('sessionToken');
+                 location.reload();
+             };
+             document.getElementById('dashboardBtn').onclick = () => {
+                 document.getElementById('userContent').innerHTML = `
+                     <h1 style='color:#007bff; text-align:left; margin-bottom:8px;'>Welcome, ${username}</h1>
+                     <p style='font-size:16px; text-align:left; color:#666; margin-bottom:32px;'>Here's your activity overview</p>
+                     <div id='userData' style='display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:24px;'>Loading your data...</div>
+                 `;
+                 fetchUserData(username);
+             };
+             document.getElementById('profileBtn').onclick = () => {
+                 document.getElementById('userContent').innerHTML = `
+                     <h2 style='color:#007bff; margin-bottom:24px;'>Your Profile</h2>
+                     <div id='userData' style='max-width:800px;'>Loading your data...</div>
+                 `;
+                 fetchUserDataProfile(username);
+             };
+             document.getElementById('questionBtn').onclick = () => {
+                 document.getElementById('userContent').innerHTML = `
+                     <h2>Questions</h2>
+                     <p>Take the quiz to improve your skills!</p>
+                     <button id='openQuestionsBtn' style='margin-top:16px; background:#28a745; color:#fff; border:none; border-radius:4px; padding:12px 24px; font-size:16px; cursor:pointer;'>Open Questions</button>
+                 `;
+                 document.getElementById('openQuestionsBtn').onclick = () => {
+                     window.location.href = 'https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Extension/questions.html';
+                 };
+             };
+             document.getElementById('settingsBtn').onclick = () => {
+                 document.getElementById('userContent').innerHTML = `<h2>Settings</h2><p>Settings panel coming soon.</p>`;
+             };
+             // Load dashboard by default
+             fetchUserData(username);
+         }
+         
+         function fetchUserData(username) {
+             fetch(SERVER_URL + '/analytics/user-data', {
+                 headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+             })
+                 .then(res => res.json())
+                 .then(data => {
+                     if (data.success && data.user) {
+                         const user = data.user;
+                         const hours = Math.floor(user.time_online / 60);
+                         const minutes = user.time_online % 60;
+                         const timeDisplay = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+                         
+                         document.getElementById('userData').innerHTML = `
+                             <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                 <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Time Online</div>
+                                 <div style='font-size:32px; font-weight:bold; color:#007bff;'>${timeDisplay}</div>
+                                 <div style='font-size:13px; color:#999; margin-top:4px;'>${user.time_online} total minutes</div>
+                             </div>
+                             <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                 <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Correct Answers</div>
+                                 <div style='font-size:32px; font-weight:bold; color:#28a745;'>${user.questions_right}</div>
+                                 <div style='font-size:13px; color:#999; margin-top:4px;'>Questions answered correctly</div>
+                             </div>
+                             <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                 <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Account Type</div>
+                                 <div style='font-size:24px; font-weight:bold; color:#6c757d;'>${user.parent ? 'Parent' : 'User'}</div>
+                                 <div style='font-size:13px; color:#999; margin-top:4px;'>User ID: #${user.id}</div>
+                             </div>
+                         `;
+                     } else {
+                         document.getElementById('userData').textContent = 'Could not load user data.';
+                     }
+                 })
+                 .catch(() => {
+                     document.getElementById('userData').textContent = 'Error loading user data.';
+                 });
+         }
+         
+         function fetchUserDataProfile(username) {
+             fetch(SERVER_URL + '/analytics/user-data', {
+                 headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+             })
+                 .then(res => res.json())
+                 .then(data => {
+                     if (data.success && data.user) {
+                         const user = data.user;
+                         const hours = Math.floor(user.time_online / 60);
+                         const minutes = user.time_online % 60;
+                         const timeDisplay = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+                         
+                         document.getElementById('userData').innerHTML = `
+                             <div style='background:#fff; padding:32px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); margin-bottom:24px;'>
+                                 <h3 style='margin:0 0 24px 0; color:#333; border-bottom:2px solid #007bff; padding-bottom:12px;'>Account Information</h3>
+                                 <div style='display:grid; grid-template-columns:200px 1fr; gap:16px; font-size:15px;'>
+                                     <div style='color:#666; font-weight:500;'>Username:</div>
+                                     <div style='color:#333; font-weight:600;'>${user.uname}</div>
+                                     
+                                     <div style='color:#666; font-weight:500;'>User ID:</div>
+                                     <div style='color:#333;'>#${user.id}</div>
+                                     
+                                     <div style='color:#666; font-weight:500;'>Account Type:</div>
+                                     <div style='color:#333;'>
+                                         <span style='background:${user.admin ? '#dc3545' : user.parent ? '#17a2b8' : '#28a745'}; color:#fff; padding:4px 12px; border-radius:16px; font-size:13px; font-weight:600;'>
+                                             ${user.admin ? 'Admin' : user.parent ? 'Parent' : 'User'}
+                                         </span>
+                                     </div>
+                                 </div>
+                             </div>
+                             
+                             <div style='background:#fff; padding:32px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                 <h3 style='margin:0 0 24px 0; color:#333; border-bottom:2px solid #007bff; padding-bottom:12px;'>Activity Statistics</h3>
+                                 <div style='display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:24px;'>
+                                     <div>
+                                         <div style='font-size:13px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Total Time Online</div>
+                                         <div style='font-size:28px; font-weight:bold; color:#007bff;'>${timeDisplay}</div>
+                                         <div style='font-size:12px; color:#999; margin-top:4px;'>${user.time_online} minutes</div>
+                                     </div>
+                                     <div>
+                                         <div style='font-size:13px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Correct Answers</div>
+                                         <div style='font-size:28px; font-weight:bold; color:#28a745;'>${user.questions_right}</div>
+                                         <div style='font-size:12px; color:#999; margin-top:4px;'>Questions answered</div>
+                                     </div>
+                                     <div>
+                                         <div style='font-size:13px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Accuracy Rate</div>
+                                         <div style='font-size:28px; font-weight:bold; color:#ffc107;'>N/A</div>
+                                         <div style='font-size:12px; color:#999; margin-top:4px;'>Coming soon</div>
+                                     </div>
+                                 </div>
+                             </div>
+                         `;
+                     } else {
+                         document.getElementById('userData').textContent = 'Could not load user data.';
+                     }
+                 })
+                 .catch(() => {
+                     document.getElementById('userData').textContent = 'Error loading user data.';
+                 });
+         }
+         
+         function showUserDashboard(username) {
+             document.body.innerHTML = `
+                 <div style="display:flex; min-height:100vh; background:#f4f6fa;">
+                     <aside style="width:220px; background:#007bff; color:#fff; padding:32px 0; display:flex; flex-direction:column; align-items:center;">
+                         <h2 style="margin-bottom:32px;">${username}</h2>
+                         <button class="user-btn" id="dashboardBtn">Dashboard</button>
+                         <button class="user-btn" id="profileBtn">Profile</button>
+                         <button class="user-btn" id="questionBtn">Questions</button>
+                         <button class="user-btn" id="settingsBtn">Settings</button>
+                         <button class="user-btn" id="logoutBtn" style="margin-top:auto; background:#d9534f;">Logout</button>
+                     </aside>
+                     <main style="flex:1; padding:48px;">
+                         <div id="userContent">
+                             <h1 style="color:#007bff;">Welcome, ${username}</h1>
+                             <p style="font-size:18px;">This is your user dashboard.</p>
+                             <div id="userData" style="margin-top:24px; font-size:17px; color:#444;">Loading your data...</div>
+                         </div>
+                     </main>
+                 </div>
+                 <style>
+                     .user-btn { width:160px; margin:8px 0; padding:12px; border:none; border-radius:6px; background:#fff; color:#007bff; font-size:16px; cursor:pointer; transition:background 0.2s; }
+                     .user-btn:hover { background:#e9ecef; }
+                     #logoutBtn { background:#d9534f; color:#fff; }
+                     #logoutBtn:hover { background:#c9302c; }
+                 </style>
+             `;
+             document.getElementById('logoutBtn').onclick = async () => {
+                 try {
+                     await fetch(SERVER_URL + '/logout', {
+                         method: 'POST',
+                         headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+                     });
+                 } catch (e) {}
+                 localStorage.removeItem('sessionToken');
+                 location.reload();
+             };
+             document.getElementById('dashboardBtn').onclick = () => {
+                 document.getElementById('userContent').innerHTML = `
+                     <h1 style='color:#007bff; text-align:left; margin-bottom:8px;'>Welcome, ${username}</h1>
+                     <p style='font-size:16px; text-align:left; color:#666; margin-bottom:32px;'>Here's your activity overview</p>
+                     <div id='userData' style='display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:24px;'>Loading your data...</div>
+                 `;
+                 fetchUserData(username);
+             };
+             document.getElementById('profileBtn').onclick = () => {
+                 document.getElementById('userContent').innerHTML = `
+                     <h2 style='color:#007bff; margin-bottom:24px;'>Your Profile</h2>
+                     <div id='userData' style='max-width:800px;'>Loading your data...</div>
+                 `;
+                 fetchUserDataProfile(username);
+             };
+             document.getElementById('questionBtn').onclick = () => {
+                 document.getElementById('userContent').innerHTML = `
+                     <h2>Questions</h2>
+                     <p>Take the quiz to improve your skills!</p>
+                     <button id='openQuestionsBtn' style='margin-top:16px; background:#28a745; color:#fff; border:none; border-radius:4px; padding:12px 24px; font-size:16px; cursor:pointer;'>Open Questions</button>
+                 `;
+                 document.getElementById('openQuestionsBtn').onclick = () => {
+                     window.location.href = 'https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Extension/questions.html';
+                 };
+             };
+             document.getElementById('settingsBtn').onclick = () => {
+                 document.getElementById('userContent').innerHTML = `<h2>Settings</h2><p>Settings panel coming soon.</p>`;
+             };
+             // Load dashboard by default
+             fetchUserData(username);
+         }
+         
+         function fetchUserData(username) {
+             fetch(SERVER_URL + '/analytics/user-data', {
+                 headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+             })
+                 .then(res => res.json())
+                 .then(data => {
+                     if (data.success && data.user) {
+                         const user = data.user;
+                         const hours = Math.floor(user.time_online / 60);
+                         const minutes = user.time_online % 60;
+                         const timeDisplay = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+                         
+                         document.getElementById('userData').innerHTML = `
+                             <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                 <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Time Online</div>
+                                 <div style='font-size:32px; font-weight:bold; color:#007bff;'>${timeDisplay}</div>
+                                 <div style='font-size:13px; color:#999; margin-top:4px;'>${user.time_online} total minutes</div>
+                             </div>
+                             <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                 <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Correct Answers</div>
+                                 <div style='font-size:32px; font-weight:bold; color:#28a745;'>${user.questions_right}</div>
+                                 <div style='font-size:13px; color:#999; margin-top:4px;'>Questions answered correctly</div>
+                             </div>
+                             <div style='background:#fff; padding:24px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                 <div style='font-size:14px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Account Type</div>
+                                 <div style='font-size:24px; font-weight:bold; color:#6c757d;'>${user.parent ? 'Parent' : 'User'}</div>
+                                 <div style='font-size:13px; color:#999; margin-top:4px;'>User ID: #${user.id}</div>
+                             </div>
+                         `;
+                     } else {
+                         document.getElementById('userData').textContent = 'Could not load user data.';
+                     }
+                 })
+                 .catch(() => {
+                     document.getElementById('userData').textContent = 'Error loading user data.';
+                 });
+         }
+         
+         function fetchUserDataProfile(username) {
+             fetch(SERVER_URL + '/analytics/user-data', {
+                 headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+             })
+                 .then(res => res.json())
+                 .then(data => {
+                     if (data.success && data.user) {
+                         const user = data.user;
+                         const hours = Math.floor(user.time_online / 60);
+                         const minutes = user.time_online % 60;
+                         const timeDisplay = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+                         
+                         document.getElementById('userData').innerHTML = `
+                             <div style='background:#fff; padding:32px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); margin-bottom:24px;'>
+                                 <h3 style='margin:0 0 24px 0; color:#333; border-bottom:2px solid #007bff; padding-bottom:12px;'>Account Information</h3>
+                                 <div style='display:grid; grid-template-columns:200px 1fr; gap:16px; font-size:15px;'>
+                                     <div style='color:#666; font-weight:500;'>Username:</div>
+                                     <div style='color:#333; font-weight:600;'>${user.uname}</div>
+                                     
+                                     <div style='color:#666; font-weight:500;'>User ID:</div>
+                                     <div style='color:#333;'>#${user.id}</div>
+                                     
+                                     <div style='color:#666; font-weight:500;'>Account Type:</div>
+                                     <div style='color:#333;'>
+                                         <span style='background:${user.admin ? '#dc3545' : user.parent ? '#17a2b8' : '#28a745'}; color:#fff; padding:4px 12px; border-radius:16px; font-size:13px; font-weight:600;'>
+                                             ${user.admin ? 'Admin' : user.parent ? 'Parent' : 'User'}
+                                         </span>
+                                     </div>
+                                 </div>
+                             </div>
+                             
+                             <div style='background:#fff; padding:32px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                                 <h3 style='margin:0 0 24px 0; color:#333; border-bottom:2px solid #007bff; padding-bottom:12px;'>Activity Statistics</h3>
+                                 <div style='display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:24px;'>
+                                     <div>
+                                         <div style='font-size:13px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Total Time Online</div>
+                                         <div style='font-size:28px; font-weight:bold; color:#007bff;'>${timeDisplay}</div>
+                                         <div style='font-size:12px; color:#999; margin-top:4px;'>${user.time_online} minutes</div>
+                                     </div>
+                                     <div>
+                                         <div style='font-size:13px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Correct Answers</div>
+                                         <div style='font-size:28px; font-weight:bold; color:#28a745;'>${user.questions_right}</div>
+                                         <div style='font-size:12px; color:#999; margin-top:4px;'>Questions answered</div>
+                                     </div>
+                                     <div>
+                                         <div style='font-size:13px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;'>Accuracy Rate</div>
+                                         <div style='font-size:28px; font-weight:bold; color:#ffc107;'>N/A</div>
+                                         <div style='font-size:12px; color:#999; margin-top:4px;'>Coming soon</div>
+                                     </div>
+                                 </div>
+                             </div>
+                         `;
+                     } else {
+                         document.getElementById('userData').textContent = 'Could not load user data.';
+                     }
+                 })
+                 .catch(() => {
+                     document.getElementById('userData').textContent = 'Error loading user data.';
+                 });
+         }
+         
+         
+         function loginUser(username, password) {
+         (async function() {
+            try {
+               document.getElementById('loginMsg').innerHTML = `
+               <div class="spinner"></div>
+               `;
+               const response = await fetch(SERVER_URL + '/login', {
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify({ uname: username, pass: password })
+               });
+               const data = await response.json();
+            
+               if (data.token) {
+                   setSessionToken(data.token);
+            
+                   // Validate token with server
+                   const validRes = await fetch(SERVER_URL + '/validate-token', {
+                       method: 'POST',
+                       headers: { 'Authorization': 'Bearer ' + data.token }
+                   });
+                   const validData = await validRes.json();
+                   if (!validData.success) {
+                       localStorage.removeItem('sessionToken');
+                       document.getElementById('loginMsg').textContent = 'Session invalid. Please login again.';
+                       return;
+                   }
+            
+                   // Decode JWT payload
+                   const payload = JSON.parse(atob(data.token.split('.')[1]));
+            
+                   // Check for redirect query parameter
+                   const urlParams = new URLSearchParams(window.location.search);
+                   const redirect = urlParams.get('redirect');
+                   
+                   if (redirect) {
+                       // Redirect to the specified page
+                       window.location.href = redirect;
+                       return;
+                   }
+            
+                   // Decide dashboard based on token roles
+                   if (payload.admin) {
+                       showAdminDashboard(username);
+                   } else if (payload.parent) {
+                       showParentDashboard(username);
+                   } else if (payload.child) {
+                       document.getElementById('loginMsg').textContent = 'Child accounts cannot log in here.';
+                   } else {
+                       showUserDashboard(username);
+                   }
+               } else {
+                   document.getElementById('loginMsg').textContent = data.message || 'Login failed.';
+               }
+            } catch (error) {
+               document.getElementById('loginMsg').textContent = 'Error connecting to server.';
+            }
+         })();
+         }
+
+         // Add login form submit handler
+         document.addEventListener('DOMContentLoaded', () => {
+             const loginForm = document.getElementById('loginForm');
+             const signupForm = document.getElementById('signupForm');
+             
+             if (loginForm) {
+                 loginForm.onsubmit = function(event) {
+                    event.preventDefault();
+                    const username = document.getElementById('loginEmail').value;
+                    const password = document.getElementById('loginPassword').value;
+                    loginUser(username, password);
+                 };
+             }
+
+             // Add signup form submit handler
+             if (signupForm) {
+                 signupForm.onsubmit = function(event) {
+                    event.preventDefault();
+                    const username = document.getElementById('signupEmail').value;
+                    const password = document.getElementById('signupPassword').value;
+                    const confirmPassword = document.getElementById('signupConfirm').value;
+                    
+                    if (password !== confirmPassword) {
+                        document.getElementById('signupMsg').textContent = 'Passwords do not match.';
+                        return;
+                    }
+                    
+                    (async function() {
+                        try {
+                            document.getElementById('signupMsg').innerHTML = '<div class="spinner"></div>';
+                            const response = await fetch(SERVER_URL + '/signup', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ uname: username, pass: password })
+                            });
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                document.getElementById('signupMsg').textContent = 'Signup successful! Logging you in...';
+                                setTimeout(() => {
+                                    loginUser(username, password);
+                                }, 1000);
+                            } else {
+                                document.getElementById('signupMsg').textContent = data.message || 'Signup failed.';
+                            }
+                        } catch (error) {
+                            document.getElementById('signupMsg').textContent = 'Error connecting to server.';
+                        }
+                    })();
+                 };
+             }
+         });
+
+      </script>
+   </body>
+</html>

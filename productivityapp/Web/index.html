@@ -39,7 +39,7 @@
       </div>
       <script>
          // Define SERVER_URL first, before any other code
-         const SERVER_URL = 'https://backend.emortron.me';
+         const SERVER_URL = 'https://turbo-lamp-wrvgxj7wgxv5256xv-8000.app.github.dev';
          
          // Session token management
          let sessionToken = null;
@@ -121,6 +121,7 @@
                          <h2 style="margin-bottom:32px;">Admin</h2>
                          <button class="admin-btn" id="dashboardBtn">Dashboard</button>
                          <button class="admin-btn" id="userMgmtBtn">Users</button>
+                         <button class="admin-btn" id="questionsBtn">Questions</button>
                          <button class="admin-btn" id="settingsBtn">Settings</button>
                          <button class="admin-btn" id="logoutBtn" style="margin-top:auto; background:#d9534f;">Logout</button>
                      </aside>
@@ -426,6 +427,17 @@
                  };
                  fetchAllUsers();
              };
+             document.getElementById('questionsBtn').onclick = () => {
+                 document.getElementById('adminContent').innerHTML = `
+                     <h2>Question Management</h2>
+                     <div id='questionsTable' style='max-height:400px; overflow-y:auto;'>Loading questions...</div>
+                     <button id='addQuestionBtn' style='margin-top:16px; background:#28a745; color:#fff; border:none; border-radius:4px; padding:10px 24px; font-size:16px; cursor:pointer;'>Add Question</button>
+                 `;
+                 document.getElementById('addQuestionBtn').onclick = () => {
+                     showQuestionModal();
+                 };
+                 fetchAllQuestions();
+             };
              document.getElementById('dashboardBtn').onclick = () => {
                  document.getElementById('adminContent').innerHTML = `
                      <h1 style="color:#007bff; margin-bottom:8px;">Admin Dashboard</h1>
@@ -446,6 +458,181 @@
                  checkServerStatus();
                  checkForWarnings();
              };
+             
+             function fetchAllQuestions() {
+                 fetch(SERVER_URL + '/questions/all')
+                     .then(res => res.json())
+                     .then(data => {
+                         if (data.success && Array.isArray(data.questions)) {
+                             let table = `<table style='width:100%; border-collapse:collapse; margin-top:16px;'>`;
+                             table += `<tr style='background:#e9ecef;'>
+                                 <th style='padding:8px; border:1px solid #ccc; text-align:left;'>ID</th>
+                                 <th style='padding:8px; border:1px solid #ccc; text-align:left;'>Title</th>
+                                 <th style='padding:8px; border:1px solid #ccc; text-align:left;'>Question</th>
+                                 <th style='padding:8px; border:1px solid #ccc; text-align:left;'>Type</th>
+                                 <th style='padding:8px; border:1px solid #ccc; text-align:left;'>Correct Answer</th>
+                                 <th style='padding:8px; border:1px solid #ccc; text-align:left;'>Action</th>
+                             </tr>`;
+                             for (const q of data.questions) {
+                                 table += `<tr>
+                                     <td style='padding:8px; border:1px solid #ccc;'>${q.id}</td>
+                                     <td style='padding:8px; border:1px solid #ccc;'>${q.title}</td>
+                                     <td style='padding:8px; border:1px solid #ccc;'>${q.question.substring(0, 50)}...</td>
+                                     <td style='padding:8px; border:1px solid #ccc;'>${q.type.toUpperCase()}</td>
+                                     <td style='padding:8px; border:1px solid #ccc;'>${q.correct}</td>
+                                     <td style='padding:8px; border:1px solid #ccc;'>
+                                         <button class='editQuestionBtn' data-id='${q.id}' style='background:#007bff; color:#fff; border:none; border-radius:4px; padding:6px 12px; cursor:pointer; margin-right:8px;'>Edit</button>
+                                         <button class='deleteQuestionBtn' data-id='${q.id}' style='background:#d9534f; color:#fff; border:none; border-radius:4px; padding:6px 12px; cursor:pointer;'>Delete</button>
+                                     </td>
+                                 </tr>`;
+                             }
+                             table += `</table>`;
+                             document.getElementById('questionsTable').innerHTML = table;
+                             
+                             document.querySelectorAll('.deleteQuestionBtn').forEach(btn => {
+                                 btn.onclick = function() {
+                                     const questionId = this.getAttribute('data-id');
+                                     if (confirm('Are you sure you want to delete this question?')) {
+                                         fetch(`${SERVER_URL}/questions/${questionId}`, {
+                                             method: 'DELETE',
+                                             headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+                                         })
+                                         .then(res => res.json())
+                                         .then(result => {
+                                             if (result.success) {
+                                                 fetchAllQuestions();
+                                             } else {
+                                                 alert('Error deleting question');
+                                             }
+                                         })
+                                         .catch(() => alert('Error deleting question.'));
+                                     }
+                                 };
+                             });
+                             
+                             document.querySelectorAll('.editQuestionBtn').forEach(btn => {
+                                 btn.onclick = function() {
+                                     const questionId = this.getAttribute('data-id');
+                                     showQuestionModal(questionId);
+                                 };
+                             });
+                         } else {
+                             document.getElementById('questionsTable').textContent = 'Could not load questions.';
+                         }
+                     })
+                     .catch(() => {
+                         document.getElementById('questionsTable').textContent = 'Error loading questions.';
+                     });
+             }
+             
+             function showQuestionModal(questionId = null) {
+                 let modalContent = `
+                     <h3>${questionId ? 'Edit Question' : 'Add New Question'}</h3>
+                     <form id='questionForm'>
+                         <label>Title</label>
+                         <input type='text' id='questionTitle' required style='width:100%;margin-bottom:12px;'>
+                         <label>Question</label>
+                         <textarea id='questionText' required style='width:100%;height:100px;margin-bottom:12px;'></textarea>
+                         <label>Type</label>
+                         <select id='questionType' style='width:100%;margin-bottom:12px;' onchange="updateAnswerFields()">
+                             <option value='mcq'>Multiple Choice</option>
+                             <option value='typed'>Typed Answer</option>
+                         </select>
+                         <label>Answers (for MCQ, comma separated)</label>
+                         <input type='text' id='questionAnswers' style='width:100%;margin-bottom:12px;'>
+                         <label>Correct Answer</label>
+                         <input type='text' id='questionCorrect' required style='width:100%;margin-bottom:12px;'>
+                         <div style='display:flex;justify-content:flex-end;gap:12px;'>
+                             <button type='button' id='cancelQuestion' style='background:#ccc;color:#333;padding:8px 18px;border:none;border-radius:4px;cursor:pointer;'>Cancel</button>
+                             <button type='submit' style='background:#007bff;color:#fff;padding:8px 18px;border:none;border-radius:4px;cursor:pointer;'>Save</button>
+                         </div>
+                     </form>
+                 `;
+                 
+                 // Create modal
+                 let modal = document.getElementById('questionModal');
+                 if (!modal) {
+                     modal = document.createElement('div');
+                     modal.id = 'questionModal';
+                     modal.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:1000;display:none;';
+                     document.body.appendChild(modal);
+                 }
+                 
+                 modal.innerHTML = `
+                     <div style='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:32px 24px;border-radius:8px;box-shadow:0 2px 16px rgba(0,0,0,0.18);z-index:1001;min-width:450px;max-height:80vh;overflow-y:auto;'>
+                         ${modalContent}
+                     </div>
+                 `;
+                 modal.style.display = 'block';
+                 
+                 // Populate if editing
+                 if (questionId) {
+                     fetch(`${SERVER_URL}/questions/${questionId}`, {
+                         headers: { 'Authorization': 'Bearer ' + getSessionToken() }
+                     })
+                     .then(res => res.json())
+                     .then(data => {
+                         if (data.success) {
+                             const q = data.question;
+                             document.getElementById('questionTitle').value = q.title;
+                             document.getElementById('questionText').value = q.question;
+                             document.getElementById('questionType').value = q.type;
+                             document.getElementById('questionCorrect').value = q.correct;
+                             if (q.type === 'mcq' && q.answers.length > 0) {
+                                 document.getElementById('questionAnswers').value = q.answers.join(', ');
+                             }
+                         }
+                     });
+                 }
+                 
+                 document.getElementById('cancelQuestion').onclick = () => {
+                     modal.style.display = 'none';
+                 };
+                 
+                 document.getElementById('questionForm').onsubmit = async (e) => {
+                     e.preventDefault();
+                     const title = document.getElementById('questionTitle').value;
+                     const questionText = document.getElementById('questionText').value;
+                     const type = document.getElementById('questionType').value;
+                     const correct = document.getElementById('questionCorrect').value;
+                     const answersStr = document.getElementById('questionAnswers').value;
+                     const answers = type === 'mcq' ? answersStr.split(',').map(a => a.trim()) : [];
+                     
+                     try {
+                         let response, result;
+                         if (questionId) {
+                             // Update
+                             response = await fetch(`${SERVER_URL}/questions/${questionId}`, {
+                                 method: 'PUT',
+                                 headers: {
+                                     'Content-Type': 'application/json',
+                                     'Authorization': `Bearer ${getSessionToken()}`
+                                 },
+                                 body: JSON.stringify({ title, question: questionText, type, answers, correct })
+                             });
+                         } else {
+                             // Add new
+                             response = await fetch(`${SERVER_URL}/questions/add`, {
+                                 method: 'POST',
+                                 headers: {
+                                     'Content-Type': 'application/json',
+                                     'Authorization': `Bearer ${getSessionToken()}`
+                                 },
+                                 body: JSON.stringify({ title, question: questionText, type, answers, correct })
+                             });
+                         }
+                         result = await response.json();
+                         if (result.success) {
+                             modal.style.display = 'none';
+                             fetchAllQuestions();
+                         } else {
+                             alert(result.message || 'Error saving question');
+                         }
+                     } catch (err) {
+                         alert('Error saving question');
+                     }
+                 };
+             }
              
              function checkServerStatus() {
                  fetch(SERVER_URL + '/')
@@ -752,7 +939,7 @@
                      <button id='openQuestionsBtn' style='margin-top:16px; background:#28a745; color:#fff; border:none; border-radius:4px; padding:12px 24px; font-size:16px; cursor:pointer;'>Open Questions</button>
                  `;
                  document.getElementById('openQuestionsBtn').onclick = () => {
-                     window.location.href = 'https://emortron.me/productivityapp/Web?redirect=https://emortron.me/productivityapp/Extension/questions.html';
+                     window.location.href = 'https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Extension/questions.html';
                  };
              };
              document.getElementById('settingsBtn').onclick = () => {
@@ -919,7 +1106,7 @@
                      <button id='openQuestionsBtn' style='margin-top:16px; background:#28a745; color:#fff; border:none; border-radius:4px; padding:12px 24px; font-size:16px; cursor:pointer;'>Open Questions</button>
                  `;
                  document.getElementById('openQuestionsBtn').onclick = () => {
-                     window.location.href = 'https://emortron.me/productivityapp/Extension/questions.html';
+                     window.location.href = 'https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Extension/questions.html';
                  };
              };
              document.getElementById('settingsBtn').onclick = () => {

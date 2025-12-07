@@ -58,7 +58,7 @@ function checkAuthentication() {
     mainContainer.style.display = 'none';
     
     loginBtn.addEventListener('click', () => {
-      window.location.href = 'https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Web/index.html?redirect=https://turbo-lamp-wrvgxj7wgxv5256xv-3000.app.github.dev/Extension/questions.html';
+      window.location.href = 'https://emortron.me/productivityapp/Web/index.html?redirect=https://emortron.me/productivityapp/Extension/questions.html';
     });
     return false;
   }

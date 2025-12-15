@@ -38,6 +38,15 @@
       margin:20px;
     }
 
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      margin: 0 10px;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--primary-light); }
+
     nav h2 { color: var(--primary-light); }
 
     header {
@@ -135,7 +144,8 @@
 <body>
 
   <nav>
-    <h2>SkyFrameSMP</h2>
+    <a href="/">Back</a><h2>SkyFrameSMP</h2>
+    
     <span>Staff Applications</span>
   </nav>
 
@@ -163,7 +173,6 @@
     <h2>Staff Application Form</h2>
     <p>Please answer honestly. Applications are reviewed carefully.</p>
 
-    <!-- 🔽 REPLACE THIS URL WITH YOUR GOOGLE FORM EMBED LINK 🔽 -->
     <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdKRIyPm5BJM2uyXcu7INMIpOChgDLdp0hUqp6_H2Xm5PpE1A/viewform?embedded=true" width="640" height="2354" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
   </section>
 

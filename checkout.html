@@ -166,50 +166,85 @@
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const cartParam = params.get("cart");
-    const codeParam = params.get("code");
-    const nameParam = params.get("uname");
+  const params = new URLSearchParams(window.location.search);
+  const cartParam = params.get("cart");
+  const codeParam = params.get("code");
+  const unameParam = params.get("user") || params.get("uname");
 
-    const cartList = document.getElementById("cartItems");
-    const codeInput = document.getElementById("code");
-    const unameInput = document.getElementById("uname");
+  const cartList = document.getElementById("cartItems");
+  const codeInput = document.getElementById("code");
+  const unameInput = document.getElementById("uname");
 
-    // Load cart from URL
-    if (cartParam) {
-      cartParam.split(",").forEach(item => {
+  function decodeCart(encoded) {
+    try {
+      // URL-safe Base64 → normal Base64
+      encoded = encoded
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+
+      // Restore padding
+      while (encoded.length % 4) {
+        encoded += "=";
+      }
+
+      const json = atob(encoded);
+      const cart = JSON.parse(json);
+
+      if (!Array.isArray(cart)) throw "Invalid cart";
+
+      // Validate cart structure
+      return cart.filter(item =>
+        item &&
+        typeof item.id === "string" &&
+        typeof item.name === "string" &&
+        Number.isInteger(item.qty) &&
+        item.qty > 0
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Load cart
+  if (cartParam) {
+    const cart = decodeCart(cartParam);
+
+    if (!cart || cart.length === 0) {
+      cartList.innerHTML =
+        "<li style='color:#ff6b6b'>Invalid or corrupted cart</li>";
+    } else {
+      cart.forEach(item => {
         const li = document.createElement("li");
-        li.textContent = "• " + decodeURIComponent(item.replace(/\+/g, " "));
+        li.textContent = `• ${item.name} × ${item.qty}`;
         cartList.appendChild(li);
       });
+    }
+  } else {
+    cartList.innerHTML =
+      "<li style='color:#bdb9ce'>Cart is empty</li>";
+  }
+
+  // Prefill code + username
+  if (codeParam) codeInput.value = codeParam;
+  if (unameParam) unameInput.value = unameParam;
+
+  function applyCode() {
+    const success = document.getElementById("success");
+    const error = document.getElementById("error");
+
+    success.style.display = "none";
+    error.style.display = "none";
+
+    const validCodes = ["SKYFRAME-2025", "FREE-RANK", "EXPLORER50"];
+    const input = codeInput.value.trim().toUpperCase();
+
+    if (validCodes.includes(input)) {
+      success.style.display = "block";
     } else {
-      cartList.innerHTML = "<li style='color:#bdb9ce'>Cart is empty</li>";
+      error.style.display = "block";
     }
-
-    // Prefill code from URL
-    if (codeParam) {
-      codeInput.value = codeParam;
-    }
-    if (nameParam) {
-      unameInput.value= nameParam;
-    }
-
-    function applyCode() {
-      const success = document.getElementById("success");
-      const error = document.getElementById("error");
-      success.style.display = "none";
-      error.style.display = "none";
-
-      const validCodes = ["SKYFRAME-2025", "FREE-RANK", "EXPLORER50"];
-      const input = codeInput.value.trim().toUpperCase();
-
-      if (validCodes.includes(input)) {
-        success.style.display = "block";
-      } else {
-        error.style.display = "block";
-      }
-    }
-  </script>
+  }
+</script>
 
 </body>
 </html>

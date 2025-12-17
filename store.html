@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -1055,29 +1056,35 @@
     return;
   }
 
-  const key = prompt("Enter your product key / voucher:");
-  if (!key) {
+  const code = prompt("Enter your product key / voucher:");
+  if (!code) {
     alert("No voucher entered.");
     return;
   }
 
-  const cartParam = cart
-    .map(item => {
-      const label = item.name || item.id || "unknown";
-      const safeLabel = encodeURIComponent(String(label));
-      return `${safeLabel}(${item.qty || 1})`;
-    })
-    .join(",");
-
   const uname = localStorage.getItem("sf_username") || "unknown";
 
-  const url =
-    `checkout.html?cart=${cartParam}` +
-    `&code=${encodeURIComponent(key)}` +
-    `&user=${encodeURIComponent(uname)}`;
+  // Only allow safe cart data
+  const safeCart = cart.map(item => ({
+    id: item.id,
+    name: item.name,
+    qty: item.qty
+  }));
 
+  // Encode cart securely
+  const encodedCart = btoa(JSON.stringify(safeCart))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+
+  const url =
+    `/checkout.html?cart=${encodedCart}` +
+    `&code=${encodeURIComponent(code)}` +
+    `&user=${encodeURIComponent(uname)}`;
+  console.log(url)
   window.location.href = url;
 }
+
 
 
       /* Username modal behavior */
@@ -1136,6 +1143,7 @@
       });
     </script>
 
-  </body>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"9ffb860fd25f4587acf897bd0239805a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
 
 </html>

@@ -92,7 +92,11 @@
       font-size:1rem;
       outline:none;
     }
-
+    input:disabled {
+  background-color: #424242; /* A specific light grey color */
+  color: #666; /* Grey text color */
+  cursor: not-allowed; /* Changes the cursor to indicate it's not usable */
+}
     input:focus {
       border-color: var(--primary-light);
     }
@@ -146,10 +150,10 @@
       <h3>Your Cart</h3>
       <ul id="cartItems"></ul>
     </div>
-
+    <label for="uname">Username</label>
+    <input id="uname" type="text" placeholder="Username" disabled />
     <label for="code">Redeem Code</label>
     <input id="code" type="text" placeholder="XXXX-XXXX-XXXX" />
-
     <button onclick="applyCode()">Apply Code</button>
 
     <div id="success" class="message success">
@@ -165,9 +169,11 @@
     const params = new URLSearchParams(window.location.search);
     const cartParam = params.get("cart");
     const codeParam = params.get("code");
+    const nameParam = params.get("uname");
 
     const cartList = document.getElementById("cartItems");
     const codeInput = document.getElementById("code");
+    const unameInput = document.getElementById("uname");
 
     // Load cart from URL
     if (cartParam) {
@@ -183,6 +189,9 @@
     // Prefill code from URL
     if (codeParam) {
       codeInput.value = codeParam;
+    }
+    if (nameParam) {
+      unameInput.value= nameParam;
     }
 
     function applyCode() {

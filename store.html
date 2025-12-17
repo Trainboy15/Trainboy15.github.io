@@ -1049,47 +1049,37 @@
         document.getElementById('openCartBtn').setAttribute('aria-expanded', 'true');
       }
 
-      function checkout() {
-        if (cart.length === 0) return alert("Your cart is empty!");
-        const key = prompt("Enter your product key / voucher:");
-        if (!key) return alert("No voucher entered.");
-        const uname = localStorage.getItem('sf_username') || 'unknown';
-        // Send only IDs and quantities
-        const payload = {
-          username: uname,
-          voucher: key,
-          items: cart.map(c => ({
-            id: c.id,
-            qty: c.qty
-          }))
-        };
-        // You had a dev URL before; keep behavior but handle errors gracefully
-        fetch("https://endpoint.emortron.me/redeem", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-          })
-          .then(r => r.json().catch(() => ({
-            success: false,
-            message: 'Invalid server response'
-          })))
-          .then(data => {
-            if (data.success) {
-              alert("Checkout successful! " + (data.message || ""));
-              cart = [];
-              saveCart();
-              renderCart();
-            } else {
-              alert("Checkout failed: " + (data.message || "Unknown error"));
-            }
-          })
-          .catch(err => {
-            console.error(err);
-            alert("Checkout failed: Unknown error");
-          });
-      }
+ function checkout() {
+  if (!cart || cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+
+  const key = prompt("Enter your product key / voucher:");
+  if (!key) {
+    alert("No voucher entered.");
+    return;
+  }
+
+  const cartParam = cart
+    .map(item => {
+      const label = item.name || item.id || "unknown";
+      const safeLabel = encodeURIComponent(String(label));
+      return `${safeLabel}(${item.qty || 1})`;
+    })
+    .join(",");
+
+  const uname = localStorage.getItem("sf_username") || "unknown";
+
+  const url =
+    `checkout.html?cart=${cartParam}` +
+    `&code=${encodeURIComponent(key)}` +
+    `&user=${encodeURIComponent(uname)}`;
+
+  window.location.href = url;
+}
+
+
       /* Username modal behavior */
       function openModal(id) {
         const el = document.getElementById(id);

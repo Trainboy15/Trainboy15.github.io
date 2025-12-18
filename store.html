@@ -8,12 +8,12 @@
     <title>Skyframe Store</title>
     <style>
       :root {
-        --primary: #7c3aed;
-        --primary-light: #a855f7;
-        --bg-dark: #141018;
-        --bg-light: #1e1525;
-        --text: #f5f4fb;
-        --muted: #bdb9ce;
+        --primary: #6f30db;
+        --primary-light: #a34ff1;
+        --bg-dark: #1d1823;
+        --bg-light: #201627;
+        --text: #e4e2f0;
+        --muted: #b7b4c5;
         --radius: 12px;
         --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         --accent-gradient: linear-gradient(90deg, var(--primary), var(--primary-light));
@@ -1071,16 +1071,11 @@
     qty: item.qty
   }));
 
-  // Encode cart securely
-  const encodedCart = btoa(JSON.stringify(safeCart))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-
+  
   const url =
-    `/checkout.html?cart=${encodedCart}` +
-    `&code=${encodeURIComponent(code)}` +
-    `&user=${encodeURIComponent(uname)}`;
+    `/checkout.html?cart=${safeCart}` +
+    `&code=${code}` +
+    `&user=${uname}`;
   console.log(url)
   window.location.href = url;
 }

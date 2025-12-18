@@ -175,39 +175,9 @@
   const codeInput = document.getElementById("code");
   const unameInput = document.getElementById("uname");
 
-  function decodeCart(encoded) {
-    try {
-      // URL-safe Base64 → normal Base64
-      encoded = encoded
-        .replace(/-/g, "+")
-        .replace(/_/g, "/");
-
-      // Restore padding
-      while (encoded.length % 4) {
-        encoded += "=";
-      }
-
-      const json = atob(encoded);
-      const cart = JSON.parse(json);
-
-      if (!Array.isArray(cart)) throw "Invalid cart";
-
-      // Validate cart structure
-      return cart.filter(item =>
-        item &&
-        typeof item.id === "string" &&
-        typeof item.name === "string" &&
-        Number.isInteger(item.qty) &&
-        item.qty > 0
-      );
-    } catch (e) {
-      return null;
-    }
-  }
-
   // Load cart
   if (cartParam) {
-    const cart = decodeCart(cartParam);
+    const cart = cartParam;
 
     if (!cart || cart.length === 0) {
       cartList.innerHTML =

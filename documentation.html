@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Custom Recipes Documentation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --primary-light: #a855f7;
+      --bg-dark: #141018;
+      --bg-light: #1e1525;
+      --text: #f5f4fb;
+      --muted: #bdb9ce;
+      --radius: 12px;
+      --shadow: 0 6px 25px rgba(0,0,0,0.35);
+      --accent-gradient: linear-gradient(90deg, var(--primary), var(--primary-light));
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Arial;
+      background: var(--bg-dark);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    nav {
+      padding: 16px 8%;
+      background: var(--bg-light);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav h1 {
+      font-size: 1.4rem;
+      color: var(--primary-light);
+    }
+
+    header {
+      margin: 30px auto;
+      padding: 60px 20px;
+      max-width: 1100px;
+      background: var(--accent-gradient);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    header h2 {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      opacity: 0.95;
+      font-size: 1.1rem;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    section {
+      background: var(--bg-light);
+      border-radius: var(--radius);
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    section h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: var(--primary-light);
+    }
+
+    section p {
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    ul {
+      margin-left: 20px;
+      color: var(--muted);
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    code {
+      background: #0f0b14;
+      padding: 3px 6px;
+      border-radius: 6px;
+      font-family: Consolas, monospace;
+      font-size: 0.95rem;
+      color: #e9e7ff;
+    }
+
+    pre {
+      background: #0f0b14;
+      padding: 15px;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      margin-top: 10px;
+      color: #e9e7ff;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      margin-top: 40px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    @media (max-width: 700px) {
+      header h2 { font-size: 2rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <h1>📘 Custom Recipes Docs</h1>
+  </nav>
+
+  <header>
+    <h2>Custom Recipes</h2>
+    <p>Learn how to craft special items using custom server recipes</p>
+  </header>
+
+  <main>
+
+    <section>
+      <h3>📦 What Are Custom Recipes?</h3>
+      <p>
+        Custom recipes allow players to craft special items that are not part of
+        vanilla Minecraft. These recipes are unique to our server and are used
+        for ranks, keys, upgrades, and special tools.
+      </p>
+    </section>
+
+    <section>
+      <h3>Custom Items</h3>
+      <ul>
+        <img src="https://emortron.me/home/images/commonkeyupgrade.png">
+        <br>
+        <img src="https://emortron.me/home/images/keyshard.png">
+      </ul>
+    </section>
+
+    <section>
+      <h3>⚒️ Recipe Types</h3>
+      <ul>
+        <li><strong>Shaped Recipes</strong> – Item placement matters</li>
+        <li><strong>Shapeless Recipes</strong> – Any order works</li>
+        <li><strong>Smelting Recipes</strong> – Custom furnace outputs</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Recipes</h3>
+      <p>Common Key (Shapeless)</p>
+        <img src="https://emortron.me/home/images/commonkeycraft.png">
+      <p>
+        Result: <code>Common Key</code>
+      </p>
+      <p>Common Key Upgrade (Shapeless)</p>
+        <img src="https://emortron.me/home/images/commonupgradecraft.png">
+      <p>
+        Result: <code>Rare Key</code>
+      </p>
+    </section>
+
+    <section>
+      <h3>🚫 Important Rules</h3>
+      <ul>
+        <li>Recipe ingredients may change per season</li>
+        <li>Exploiting recipe bugs will result in punishment</li>
+      </ul>
+    </section>
+
+    </main>
+
+  <footer>
+    © SkyFrameSMP • Custom Recipes Documentation
+  </footer>
+
+</body>
+</html>

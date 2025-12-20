@@ -125,6 +125,39 @@
     @media (max-width: 700px) {
       header h2 { font-size: 2rem; }
     }
+    /* Parent recipes container */
+.recipes {
+  padding: 30px;
+}
+
+/* Nested recipe cards */
+.recipe-card {
+  max-width: 700px;
+  margin: 20px auto;          /* centers horizontally */
+  padding: 20px;
+  background: #17111f;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+/* Images inside recipes */
+.recipe-card img {
+  display: block;
+  margin: 12px auto;
+  max-width: 100%;
+}
+
+/* Reduce spacing between text */
+.recipe-card p {
+  margin-bottom: 6px;
+}
+
+/* Prevent nested sections from inheriting large margins */
+section section {
+  margin-bottom: 0;
+}
+
   </style>
 </head>
 
@@ -132,7 +165,6 @@
 
   <nav>
     <h1>📘 Custom Recipes Docs</h1>
-    <h1>COMING SOON!</h1>
   </nav>
   <header>
     <h2>Custom Recipes</h2>
@@ -153,38 +185,62 @@
       <h3>Custom Items</h3>
       <ul>
         <img id="crystal" src="https://emortron.me/home/images/crafts/crystal.png">
-        <label for="crystal">A crystal</lable>
+        <label for="crystal">A common crystal</lable>
         <br>
-        
+
+        <img id="crystal" src="https://emortron.me/home/images/crafts/rarecrystal.png">
+        <label for="crystal">A rare crystal</lable>
+        <br>
+
         <img id="shard" src="https://emortron.me/home/images/crafts/keyshard.png">
         <label for="shard">A Keyshard</lable>
         <br>
+
+        <img id="shard" src="https://emortron.me/home/images/crafts/chargedkeyshard.png">
+        <label for="shard">A Charged Keyshard</lable>
+        <br>
+
         <p>These items can be obtained from the <code>/shop</code> and in-game events.</p>
       </ul>
     </section>
 
-    <section>
-      <h3>⚒️ Recipe Types</h3>
-      <ul>
-        <li><strong>Shaped Recipes</strong> – Item placement matters</li>
-        <li><strong>Shapeless Recipes</strong> – Any order works</li>
-        <li><strong>Smelting Recipes</strong> – Custom furnace outputs</li>
-      </ul>
-    </section>
+<section class="recipes">
+  <h3>Recipes</h3>
 
-    <section>
-      <h3>Recipes</h3>
-      <p>Common Key (Shapeless)</p>
-        <img src="https://emortron.me/home/images/commonkeycraft.png">
-      <p>
-        Result: <code>Common Key</code>
-      </p>
-      <p>Common Key Upgrade (Shapeless)</p>
-        <img src="https://emortron.me/home/images/commonupgradecraft.png">
-      <p>
-        Result: <code>Rare Key</code>
-      </p>
-    </section>
+  <div class="recipe-card">
+    <h2>Base Item</h2>
+    <p>Key Shard (Shapeless)</p>
+    <img src="https://emortron.me/home/images/crafts/keyshardcraft.png">
+    <p>Result: <code>Key Shard</code></p>
+  </div>
+
+  <div class="recipe-card">
+    <h2>Common</h2>
+    <p>Common Crystal (Shapeless)</p>
+    <img src="https://emortron.me/home/images/crafts/commoncrystalcraft.png">
+    <p>Result: <code>Common Crystal</code></p>
+
+    <p>Common Key (Shapeless)</p>
+    <img src="https://emortron.me/home/images/crafts/commonkeycraft.png">
+    <p>Result: <code>Common Key</code></p>
+  </div>
+
+  <div class="recipe-card">
+    <h2>Rare</h2>
+    <p>Rare Crystal (Shapeless)</p>
+    <img src="https://emortron.me/home/images/crafts/rarecrystalcraft.png">
+    <p>Result: <code>Rare Crystal</code></p>
+
+    <p>Charged Key Shard (Furnace)</p>
+    <img src="https://emortron.me/home/images/crafts/chargedkeyshardcraft.png">
+    <p>Result: <code>Charged Key Shard</code></p>
+
+    <p>Rare Key (Shapeless)</p>
+    <img src="https://emortron.me/home/images/crafts/rarekeycraft.png">
+    <p>Result: <code>Rare Key</code></p>
+  </div>
+</section>
+
 
     <section>
       <h3>🚫 Important Rules</h3>

@@ -166,54 +166,60 @@
   </div>
 
   <script>
-  const params = new URLSearchParams(window.location.search);
-  const cartParam = params.get("cart");
-  const codeParam = params.get("code");
-  const unameParam = params.get("user") || params.get("uname");
+const params = new URLSearchParams(window.location.search);
+const cartParam = params.get("cart");
+const codeParam = params.get("code");
+const unameParam = params.get("user") || params.get("uname");
 
-  const cartList = document.getElementById("cartItems");
-  const codeInput = document.getElementById("code");
-  const unameInput = document.getElementById("uname");
+const cartList = document.getElementById("cartItems");
+const codeInput = document.getElementById("code");
+const unameInput = document.getElementById("uname");
 
-  // Load cart
-  if (cartParam) {
-    const cart = cartParam;
+// Load cart
+if (cartParam) {
+  let cart;
 
-    if (!cart || cart.length === 0) {
-      cartList.innerHTML =
-        "<li style='color:#ff6b6b'>Invalid or corrupted cart</li>";
-    } else {
-      cart.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = `• ${item.name} × ${item.qty}`;
-        cartList.appendChild(li);
-      });
-    }
-  } else {
+  try {
+    cart = JSON.parse(decodeURIComponent(cartParam));
+  } catch (e) {
+    cart = null;
+  }
+
+  if (!Array.isArray(cart) || cart.length === 0) {
     cartList.innerHTML =
-      "<li style='color:#bdb9ce'>Cart is empty</li>";
+      "<li style='color:#ff6b6b'>Invalid or corrupted cart</li>";
+  } else {
+    cart.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = `• ${item.name} × ${item.qty}`;
+      cartList.appendChild(li);
+    });
   }
+} else {
+  cartList.innerHTML =
+    "<li style='color:#bdb9ce'>Cart is empty</li>";
+}
 
-  // Prefill code + username
-  if (codeParam) codeInput.value = codeParam;
-  if (unameParam) unameInput.value = unameParam;
+// Prefill code + username
+if (codeParam) codeInput.value = codeParam;
+if (unameParam) unameInput.value = unameParam;
 
-  function applyCode() {
-    const success = document.getElementById("success");
-    const error = document.getElementById("error");
+function applyCode() {
+  const success = document.getElementById("success");
+  const error = document.getElementById("error");
 
-    success.style.display = "none";
-    error.style.display = "none";
+  success.style.display = "none";
+  error.style.display = "none";
 
-    const validCodes = ["SKYFRAME-2025", "FREE-RANK", "EXPLORER50"];
-    const input = codeInput.value.trim().toUpperCase();
+  const validCodes = ["SKYFRAME-2025", "FREE-RANK", "EXPLORER50"];
+  const input = codeInput.value.trim().toUpperCase();
 
-    if (validCodes.includes(input)) {
-      success.style.display = "block";
-    } else {
-      error.style.display = "block";
-    }
+  if (validCodes.includes(input)) {
+    success.style.display = "block";
+  } else {
+    error.style.display = "block";
   }
+}
 </script>
 
 </body>

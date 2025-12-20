@@ -1064,21 +1064,27 @@
 
   const uname = localStorage.getItem("sf_username") || "unknown";
 
-  // Only allow safe cart data
-  const safeCart = cart.map(item => ({
-    id: item.id,
-    name: item.name,
-    qty: item.qty
-  }));
+  // Build safe cart with real item names
+  const safeCart = cart.map(c => {
+    const item = (storeData[c.section] || []).find(i => i.id === c.id);
+    return {
+      id: c.id,
+      name: item ? item.name : "Unknown",
+      qty: c.qty
+    };
+  });
 
-  
+  // Encode everything properly
   const url =
-    `/checkout.html?cart=${safeCart}` +
-    `&code=${code}` +
-    `&user=${uname}`;
-  console.log(url)
+    `/checkout.html` +
+    `?cart=${encodeURIComponent(JSON.stringify(safeCart))}` +
+    `&code=${encodeURIComponent(code)}` +
+    `&user=${encodeURIComponent(uname)}`;
+
+  console.log(url);
   window.location.href = url;
 }
+
 
 
 
@@ -1137,8 +1143,6 @@
         }
       });
     </script>
-
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"9ffb860fd25f4587acf897bd0239805a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 
 </html>

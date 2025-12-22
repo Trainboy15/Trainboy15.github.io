@@ -860,6 +860,10 @@
       const usernameLabel = document.getElementById('usernameLabel');
       /* INIT */
       function init() {
+        const username = prompt("To continue, please enter the username of the player you would like to have recive this purchace",'player123')
+        if (!username) {
+          window.location.href == 'https://emortron.me/'
+        }
         renderCategories();
         setActiveCategory(activeCategory);
         renderCart();
@@ -1055,15 +1059,21 @@
     alert("Your cart is empty!");
     return;
   }
-
+  if (username == 'Guest' || !username) {
+    alert("Please enter a username!");
+    return;
+  }
   const code = prompt("Enter your product key / voucher:");
   if (!code) {
     alert("No voucher entered.");
     return;
   }
 
-  const uname = localStorage.getItem("sf_username") || "unknown";
-
+  const uname = localStorage.getItem("sf_username") || null;
+    if (uname == '' || !uname) {
+    alert("Please enter a username!");
+    return;
+  }
   // Build safe cart with real item names
   const safeCart = cart.map(c => {
     const item = (storeData[c.section] || []).find(i => i.id === c.id);

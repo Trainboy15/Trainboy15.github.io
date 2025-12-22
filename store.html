@@ -1059,10 +1059,6 @@
     alert("Your cart is empty!");
     return;
   }
-  if (username == 'Guest' || !username) {
-    alert("Please enter a username!");
-    return;
-  }
   const code = prompt("Enter your product key / voucher:");
   if (!code) {
     alert("No voucher entered.");
@@ -1070,7 +1066,7 @@
   }
 
   const uname = localStorage.getItem("sf_username") || null;
-    if (uname == '' || !uname) {
+    if (!uname) {
     alert("Please enter a username!");
     return;
   }

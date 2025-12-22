@@ -218,7 +218,7 @@ footer {
 
 <!-- Footer -->
 <footer>
-  &copy; 2025 Skyframe SMP — All Rights Reserved.
+  © 2025 Skyframe SMP — All Rights Reserved.
 </footer>
 
 <script>
@@ -229,33 +229,84 @@ function copyIP() {
   setTimeout(() => button.textContent = "Copy IP", 800);
 }
 
-async function fetchStatus() {
+async function pingServer(serverName) {
   const url = "https://endpoint.emortron.me/ping";
-  try {
-    const resp = await fetch(url);
-    if(!resp.ok) throw new Error("Network error");
-    const data = await resp.json();
-    const online = data.online ?? false;
-    const players = data.players ?? "0/0";
-    const ping = data.ping ?? "N/A";
 
-    document.getElementById("status").innerHTML = online 
-      ? `<span class="online">● Online</span>` 
+  const start = performance.now();
+  const resp = await fetch(url, {
+    headers: {
+      server: serverName
+    }
+  });
+  const time = performance.now() - start;
+
+  if (!resp.ok) throw new Error("Network error");
+
+  const data = await resp.json();
+  return {
+    ...data,
+    clientPing: Math.round(time)
+  };
+}
+
+async function fetchStatus() {
+  const servers = ["lobby", "survival", "lifesteal"];
+
+  let anyOnline = false;
+  let totalPlayers = 0;
+  let totalMax = 0;
+  let pingSum = 0;
+  let pingCount = 0;
+
+  try {
+    const results = await Promise.allSettled(
+      servers.map(s => pingServer(s))
+    );
+
+    results.forEach(r => {
+      if (r.status !== "fulfilled") return;
+
+      const data = r.value;
+      if (data.online) {
+        anyOnline = true;
+
+        const [online, max] = data.players.split("/").map(Number);
+        totalPlayers += online;
+        totalMax += max;
+
+        const pingNum = parseInt(data.ping);
+        if (!isNaN(pingNum)) {
+          pingSum += pingNum;
+          pingCount++;
+        }
+      }
+    });
+
+    const avgPing = pingCount > 0
+      ? Math.round(pingSum / pingCount) + " ms"
+      : "N/A";
+
+    document.getElementById("status").innerHTML = anyOnline
+      ? `<span class="online">● Online</span>`
       : `<span class="offline">● Offline</span>`;
 
     document.getElementById("detailsDiv").innerHTML = `
-      <p><strong>Players:</strong> ${players}</p>
-      <p><strong>Ping:</strong> ${ping}</p>
+      <p><strong>Players:</strong> ${totalPlayers} / 20</p>
+      <p><strong>Avg Ping:</strong> ${avgPing}</p>
     `;
+
   } catch {
-    document.getElementById("status").innerHTML = '<span class="offline">● Error fetching data</span>';
-    document.getElementById("detailsDiv").textContent = "Could not load server info, please try again later.";
+    document.getElementById("status").innerHTML =
+      '<span class="offline">● Error fetching data</span>';
+    document.getElementById("detailsDiv").textContent =
+      "Could not load server info, please try again later.";
   }
 }
 
 // Run immediately and refresh every 30 seconds
 fetchStatus();
 setInterval(fetchStatus, 30000);
+
 
 </script>
 

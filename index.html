@@ -230,25 +230,23 @@ function copyIP() {
 }
 
 async function fetchStatus() {
-  const url = "https://endpoint.emortron.me/status";
+  const url = "https://endpoint.emortron.me/ping";
   try {
     const resp = await fetch(url);
     if(!resp.ok) throw new Error("Network error");
     const data = await resp.json();
-    const server = data.server ?? {};
-    const online = server.online ?? false;
-    const players = server.players?.online ?? "N/A";
-    const maxPlayers = server.players?.max ?? "N/A";
-    const ping = server.ping?.time ?? "N/A";
-    const lastChecked = server.lastChecked ? new Date(server.lastChecked).toLocaleString() : "N/A";
+    const online = data.online ?? false;
+    const players = data.players ?? "0/0";
+    const ping = data.ping ?? "N/A";
+    const lastChecked = data.lastChecked ? new Date(data.lastChecked).toLocaleString() : "N/A";
 
     document.getElementById("status").innerHTML = online 
       ? `<span class="online">● Online</span>` 
       : `<span class="offline">● Offline</span>`;
 
     document.getElementById("detailsDiv").innerHTML = `
-      <p><strong>Players:</strong> ${players} / ${maxPlayers}</p>
-      <p><strong>Ping:</strong> ${ping} ms</p>
+      <p><strong>Players:</strong> ${players}</p>
+      <p><strong>Ping:</strong> ${ping}</p>
       <p><small>Last Checked: ${lastChecked}</small></p>
     `;
   } catch {
@@ -256,8 +254,11 @@ async function fetchStatus() {
     document.getElementById("detailsDiv").textContent = "Could not load server info, please try again later.";
   }
 }
+
+// Run immediately and refresh every 30 seconds
 fetchStatus();
 setInterval(fetchStatus, 30000);
+
 </script>
 
 </body>

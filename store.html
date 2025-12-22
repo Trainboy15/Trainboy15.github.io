@@ -849,7 +849,7 @@
       let activeCategory = categories[0];
       let products = storeData;
       let cart = JSON.parse(localStorage.getItem('sf_cart') || '[]');
-      let username = localStorage.getItem('sf_username') || '';
+      let username = localStorage.getItem('sf_username') || null;
       const productGrid = document.getElementById('productGrid');
       const categoryList = document.getElementById('categoryList');
       const currentCategoryTitle = document.getElementById('currentCategoryTitle');
@@ -860,10 +860,10 @@
       const usernameLabel = document.getElementById('usernameLabel');
       /* INIT */
       function init() {
-        const username = prompt("To continue, please enter the username of the player you would like to have recive this purchace",'player123')
+        localStorage.setItem('sf_username') = prompt("To continue, please enter the username of the player you would like to have recive this purchace",'player123') || null
         if (!username) {
           window.location.href == 'https://emortron.me/'
-        }
+        } 
         renderCategories();
         setActiveCategory(activeCategory);
         renderCart();

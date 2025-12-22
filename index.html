@@ -238,7 +238,6 @@ async function fetchStatus() {
     const online = data.online ?? false;
     const players = data.players ?? "0/0";
     const ping = data.ping ?? "N/A";
-    const lastChecked = data.lastChecked ? new Date(data.lastChecked).toLocaleString() : "N/A";
 
     document.getElementById("status").innerHTML = online 
       ? `<span class="online">● Online</span>` 
@@ -247,7 +246,6 @@ async function fetchStatus() {
     document.getElementById("detailsDiv").innerHTML = `
       <p><strong>Players:</strong> ${players}</p>
       <p><strong>Ping:</strong> ${ping}</p>
-      <p><small>Last Checked: ${lastChecked}</small></p>
     `;
   } catch {
     document.getElementById("status").innerHTML = '<span class="offline">● Error fetching data</span>';

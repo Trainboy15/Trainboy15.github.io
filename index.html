@@ -139,6 +139,50 @@ footer {
   border-top:1px solid rgba(255,255,255,0.05);
 }
 
+/* Popup Overlay */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Popup Box */
+.popup {
+  background: var(--bg-light);
+  color: var(--text);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  max-width: min(92vw, 420px);
+  width: fit-content;
+  animation: popIn 0.25s ease;
+  text-align: center;
+}
+
+/* Close Button */
+.popup button {
+  margin-top: 18px;
+  padding: 10px 18px;
+}
+.popup a {
+  color: var(--muted);
+  font-size:0.95rem;
+  line-height:1.5;
+}
+.popup a:hover {
+  color: var(--primary-light);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
 /* Responsive */
 @media(max-width:720px){
   nav { flex-direction:column; gap:10px; }
@@ -149,7 +193,16 @@ footer {
 </style>
 </head>
 <body>
-
+<div class="popup-overlay" id="popup" hidden>
+  <div class="popup card">
+    <h3>Survival Updates Incoming</h3>
+    <p>
+      The world of Skyframe is expanding. As our community grows, we’re preparing major updates to the Survival realm designed to improve gameplay, introduce new mechanics, and deliver a more refined experience for every player.
+      More <a href="https://discord.gg/GFsrYZqEGh">Here ↗</a>
+    </p>
+    <button onclick="closePopup()" >Got it!</button>
+  </div>
+</div>
 <!-- Navbar -->
 <nav>
   <div>
@@ -175,7 +228,7 @@ footer {
 <div class="ip-box card">
   <span class="ip" id="server-ip">IP: minecraft.emortron.me</span>
   <button onclick="copyIP()" id="copyIP">Copy IP</button>
-  <a class="btn" href="https://dicestack88.github.io/wasm%20client/index.html" target="_blank">Play Now ↗</a>
+  <a class="btn" href="https://tuff.speedslicer.dev/files/1_1UT12/WASM/" target="_blank">Play Now ↗</a>
 </div>
 
 <section class="status-box card">
@@ -222,6 +275,18 @@ footer {
 </footer>
 
 <script>
+function closePopup() {
+  document.getElementById("popup").remove()
+}
+
+document.getElementById("popup").addEventListener("click", e => {
+  if (e.target.id === "popup") closePopup();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closePopup();
+});
+
 function copyIP() {
   const button = document.getElementById("copyIP");
   navigator.clipboard.writeText("minecraft.emortron.me");
@@ -306,8 +371,6 @@ async function fetchStatus() {
 // Run immediately and refresh every 30 seconds
 fetchStatus();
 setInterval(fetchStatus, 30000);
-
-
 </script>
 
 </body>

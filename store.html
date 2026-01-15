@@ -646,7 +646,8 @@
    You may extend price, stock, variants, etc.
 */
       const storeData = {
-        "All": [{
+        "All": [
+          {
             id: "skybound",
             name: "Skybound Rank",
             price: 1.99,
@@ -682,31 +683,31 @@
             tag: "Rank"
           },
           {
-            id: "commoncrate",
-            name: "Common Crate",
-            price: 0.99,
-            description: "Get your self started with basic building blocks, shards, and standard starter tools.",
-            tag: "Crate"
-          },
-          {
-            id: "rarecrate",
-            name: "Rare Crate",
+            id: "orbit",
+            name: "Orbit Crate",
             price: 1.99,
-            description: "A chance at beneficial items like enchanted diamond tools, enchanted iron armor sets, valuable enchanting books, and other crate keys.",
+            description: "A chance at low-level enchanted diamond armor and tools, XP, and 2x Common Books (Custom Enchants), and other crate keys.",
             tag: "Crate"
           },
           {
-            id: "legendcrate",
-            name: "Legend Crate",
+            id: "celestial",
+            name: "Celestial Crate",
+            price: 2.99,
+            description: "A chance at beneficial items like mid-tier enchanted diamond tools and armor, valuable enchanting books, and other crate keys.",
+            tag: "Crate"
+          },
+          {
+            id: "pulsar",
+            name: "Pulsar Crate",
+            price: 4.99,
+            description: "A chance at high-tier enchanted diamond tools and armor with custom enchants, large amounts of XP valuable enchanting books, and other crate keys.",
+            tag: "Crate"
+          },
+          {
+            id: "solar",
+            name: "Solar Crate",
             price: 5.99,
-            description: "Unleash ultimate power with OP tools and armor, stacked totems, custom enchantments, protection crystals, and rare valuable loot!",
-            tag: "Crate"
-          },
-          {
-            id: "seasonalcrate",
-            name: "Seasonal Crate",
-            price: 3.99,
-            description: "Celebrate the season with Santa’s Gift and Santa’s Bonker—packed with festive fun and powerful loot!",
+            description: "Unleash ultimate power with OP tools and armor, stacked totems, custom enchantments, and rare valuable loot!",
             tag: "Crate"
           },
           {
@@ -738,68 +739,70 @@
             tag: "Tag"
           }
         ],
-        "Ranks": [{
-            id: "explorer",
-            name: "Explorer Rank",
+        "Ranks": [
+          {
+            id: "skybound",
+            name: "Skybound Rank",
             price: 1.99,
-            description: "- Priority Queue (beta)\n- 7 homes (+1)\n- /worth\n- /kit (Explorer kit)\n- /repair\n- /hat\n- /workbench\n- /feed",
+            description: "- Skybound kit | Can use aqua (&b) color codes | View other players balence",
             tag: "Rank"
           },
           {
-            id: "adventurer",
-            name: "Adventurer Rank",
+            id: "aetherborn",
+            name: "Aetherborn Rank",
             price: 2.99,
-            description: "- Extra claim slots\n- Cosmetic tag\n- Multiple homes (Adventurer tier)\n- /back after death\n- Virtual workbench & anvil\n- /sell & /buy\n- Adventurer kit\n- /repair\n- /feed\n- /extinguish\n- /hat\n- /near\n- /depth",
+            description: "- All of previous | Aetherborn kit | Can use dark aqua (&3) color codes | /workbench, /enderchest",
             tag: "Rank"
           },
           {
-            id: "warrior",
-            name: "Warrior Rank",
+            id: "voidwalker",
+            name: "Voidwalker Rank",
             price: 3.99,
-            description: "- PvP perks\n- Exclusive kit\n- Multiple homes (Warrior tier)\n- /repair all\n- /enchant\n- Workbench & anvil\n- Warrior kit\n- /feed & /extinguish\n- /near\n- /sell & /buy\n- /clearinventory\n- Broadcast messages",
+            description: "- All of previous | Voidwalker kit | Can use dark purple (&5) color codes | Premium Daily, Weeky, Monthly Rewards | /repair",
             tag: "Rank"
           },
           {
-            id: "champion",
-            name: "Champion Rank",
+            id: "ascended",
+            name: "Ascended Rank",
             price: 5.99,
-            description: "- Multiple homes (Champion tier)\n- /repair & /repair all\n- /enchant\n- Workbench, anvil & grindstone\n- Champion kit\n- /feed & /extinguish\n- /near\n- /fly\n- /sell & /buy\n- /seen\n- /warp other\n- /invsee\n- /clearinventory\n- /speed",
+            description: "- All of previous | Ascended kit | Can use yellow (&e) color codes | /fly, /repair all, /heal, /speed (walk only)",
             tag: "Rank"
           },
           {
-            id: "legendary",
-            name: "Legendary Rank",
+            id: "eternal",
+            name: "Eternal Rank",
             price: 6.99,
-            description: "- Multiple homes (Legend tier)\n- /repair & /repair all\n- /enchant\n- Workbench, anvil & grindstone\n- Legend kit\n- /feed & /extinguish\n- /near\n- /fly & /fly safelogin\n- /sell & /buy\n- /seen\n- /warp other\n- /invsee\n- /clearinventory\n- /speed\n- /heal\n- /tpa others\n- /worth\n- /suicide",
+            description: "- All of previous | Eternal kit | Can use all color codes",
             tag: "Rank"
           }
         ],
-        "Crates": [{
-            id: "commoncrate",
-            name: "Common Crate",
-            price: 0.99,
-            description: "Get your self started with basic building blocks, shards, and standard starter tools.",
-            tag: "Crate"
-          },
+        "Crates": [
           {
-            id: "rarecrate",
-            name: "Rare Crate",
+            id: "orbit",
+            name: "Orbit Crate",
             price: 1.99,
-            description: "A chance at beneficial items like enchanted diamond tools, enchanted iron armor sets, valuable enchanting books, and other crate keys.",
+            description: "A chance at low-level enchanted diamond armor and tools, XP, and 2x Common Books (Custom Enchants), and other crate keys.",
             tag: "Crate"
           },
           {
-            id: "legendcrate",
-            name: "Legend Crate",
+            id: "celestial",
+            name: "Celestial Crate",
+            price: 2.99,
+            description: "A chance at beneficial items like mid-tier enchanted diamond tools and armor, valuable enchanting books, and other crate keys.",
+            tag: "Crate"
+          },
+          {
+            id: "pulsar",
+            name: "Pulsar Crate",
+            price: 4.99,
+            description: "A chance at high-tier enchanted diamond tools and armor with custom enchants, large amounts of XP valuable enchanting books, and other crate keys.",
+            tag: "Crate"
+          },
+          {
+            id: "solar",
+            name: "Solar Crate",
             price: 5.99,
-            description: "Unleash ultimate power with OP tools and armor, stacked totems, custom enchantments, protection crystals, and rare valuable loot!",
-            tag: "Crate"
-          },
-          {
-            id: "seasonalcrate",
-            name: "Seasonal Crate",
-            price: 3.99,
-            description: "Celebrate the season with Santa’s Gift and Santa’s Bonker—packed with festive fun and powerful loot!",
+            description: "Unleash ultimate power with OP tools and armor, stacked totems, custom enchantments, and rare valuable loot!",
             tag: "Crate"
           }
         ],
@@ -842,7 +845,7 @@
         // Similar to your helper: use first word, lowercase
         //let clean = id.split('[')[0].trim().split(' ')[0].toLowerCase();
         // try to use external path (you used emortron.me) — fallback to placeholder
-        return `https://emortron.me/home/images/${id}.png`;
+        return `https://emortron.me/images/${id}.png`;
       }
       /* App state */
       let categories = Object.keys(storeData);

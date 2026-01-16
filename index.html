@@ -277,18 +277,6 @@ footer {
 </footer>
 
 <script>
-function closePopup() {
-  document.getElementById("popup").remove()
-}
-
-document.getElementById("popup").addEventListener("click", e => {
-  if (e.target.id === "popup") closePopup();
-});
-
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") closePopup();
-});
-
 function copyIP() {
   const button = document.getElementById("copyIP");
   navigator.clipboard.writeText("minecraft.emortron.me");
@@ -348,6 +336,10 @@ async function fetchStatus() {
         }
       }
     });
+    if (r.data == 'error code: 1033') {
+      anyOnline = false
+    }
+    
 
     const avgPing = pingCount > 0
       ? Math.round(pingSum / pingCount) + " ms"

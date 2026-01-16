@@ -211,7 +211,8 @@ function applyCode() {
   success.style.display = "none";
   error.style.display = "none";
 
-  const url = 'https://endpoint.emortron.me/redeem'
+  //const url = 'https://endpoint.emortron.me/redeem'
+  const url = 'https://tools-httpstatus.pickup-services.com/200'
   const payload = {
     username: unameInput.value.trim(),
     voucher: codeInput.value.trim(),
@@ -227,7 +228,12 @@ function applyCode() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   })
-  .then(r => r.json().catch(()=>({success:false,message:'Invalid server response'})))
+  .then(r => {
+  // Check if status is 200 and return the object
+    return r.status === 200 
+    ? { success: true, message: '200 OK' } 
+    : { success: false, message: 'Request failed' };
+  })  
   .then(data => {
     if(data.success){
       success.style.display = "block";

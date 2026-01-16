@@ -868,10 +868,8 @@ function init() {
   let storedUsername = localStorage.getItem('sf_username');
 
   if (!storedUsername) {
-    storedUsername = prompt(
-      openModal('usernameModal')
-    );
-
+    openModal('usernameModal')
+  }
     if (!storedUsername) {
       // User cancelled or entered nothing → redirect
       window.location.href = 'https://emortron.me/';

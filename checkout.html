@@ -175,10 +175,10 @@ const cartList = document.getElementById("cartItems");
 const codeInput = document.getElementById("code");
 const unameInput = document.getElementById("uname");
 
+
+let cart = []
 // Load cart
 if (cartParam) {
-  let cart;
-
   try {
     cart = JSON.parse(decodeURIComponent(cartParam));
   } catch (e) {
@@ -211,14 +211,34 @@ function applyCode() {
   success.style.display = "none";
   error.style.display = "none";
 
-  const validCodes = ["SKYFRAME-2025", "FREE-RANK", "EXPLORER50"];
-  const input = codeInput.value.trim().toUpperCase();
-
-  if (validCodes.includes(input)) {
-    success.style.display = "block";
-  } else {
-    error.style.display = "block";
+  const url = 'https://endpoint.emortron.me/redeem'
+  const payload = {
+    username: unameInput.value.trim(),
+    voucher: codeInput.value.trim(),
+    items: cart.map(c => ({ id: c.id, qty: c.qty }))
+  };
+  if (!payload.username || !payload.voucher || cart.length === 0) {
+    cartList.innerHTML =
+    "<li style='color:#bdb9ce'>Cart is empty</li>";
+    return;
   }
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json().catch(()=>({success:false,message:'Invalid server response'})))
+  .then(data => {
+    if(data.success){
+      success.style.display = "block";
+    } else {
+    error.style.display = "block";
+    }
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("Checkout failed: Unknown error");
+  });
 }
 </script>
 

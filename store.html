@@ -869,8 +869,7 @@ function init() {
 
   if (!storedUsername) {
     storedUsername = prompt(
-      "To continue, please enter the username of the player you would like to receive this purchase",
-      "player123"
+      openModal('usernameModal')
     );
 
     if (!storedUsername) {

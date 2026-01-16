@@ -67,29 +67,26 @@
       opacity:0.95;
     }
 
-    .info-panels {
-      max-width:400px;
-      display: flex;
-      justify-content: center;
-      margin: 20px;
-      min-hight: 70px;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap:25px;
-      align-items: center;
-      padding: 20px;
-    }
+.info-panels {
+  max-width: 1000px;        /* Matches your header width */
+  margin: 0 auto;           /* Centers the container horizontally */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  padding: 20px;
+}
 
-    .panel {
-      
-      background: var(--bg-light);
-      border-radius: var(--radius);
-      text-align: center;
-      padding: 20px;
-      align-items: center;
-      box-shadow: var(--shadow);
-      border:1px solid rgba(255,255,255,0.05);
-    }
-
+.panel {
+  background: var(--bg-light);
+  border-radius: var(--radius);
+  text-align: center;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,0.05);
+  display: flex;            /* Added to help center content inside panel */
+  flex-direction: column;
+  justify-content: center;
+}
     .panel h3 {
       color: var(--primary-light);
       margin-bottom:10px;
@@ -142,30 +139,27 @@ ul {
     <h1>Site map for emortron.me</h1>
   </header>
 
-  <section class="info-panels">
-    <div class="panel">
-      <h3>Main Page</h3>
-      <a href="emortron.me/">emortron.me</p>
-    </div>
-  </section>
-  <section class="info-panels">
-      <div class="panel">
-      <h3>Store</h3>
-        <a href="emortron.me/store">emortron.me/store</p>
-    </div>
-  </section>
-  <section class="info-panels">
-    <div class="panel">
-      <h3>Docs</h3>
-        <a href="https://emortron.me/documentation">emortron.me/documentation/</p>
-    </div>
-  </section>
-  <section class="info-panels">
-    <div class="panel">
-      <h3>Developers</h3>
-        <a href="https://emortron.me/images/<id>">https://emortron.me/images/<id></p>
-    </div>
-  </section>  
+ <section class="info-panels">
+  <div class="panel">
+    <h3>Main Page</h3>
+    <a href="emortron.me/">emortron.me</a>
+  </div>
+
+  <div class="panel">
+    <h3>Store</h3>
+    <a href="emortron.me/store">emortron.me/store</a>
+  </div>
+
+  <div class="panel">
+    <h3>Docs</h3>
+    <a href="https://emortron.me/documentation">emortron.me/documentation/</a>
+  </div>
+
+  <div class="panel">
+    <h3>Developers</h3>
+    <a href="https://emortron.me/images/<id>">https://emortron.me;</a>
+  </div>
+</section>
 
   <footer>
     © 2025 SkyFrameSMP • All applications are reviewed by management

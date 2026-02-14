@@ -654,7 +654,7 @@
             color: "#55FFFF",
             name: "ѕᴋʏʙᴏᴜɴᴅ Rank",
             price: 1.99,
-            description: "- Skybound kit | Can use aqua (&b) color codes | View other players balence",
+            description: "- Skybound kit | {prefix} Prefix | Can use aqua (&b) color codes | View other players balence",
             tag: "Rank"
           },
           {
@@ -892,6 +892,19 @@
         // try to use external path (you used emortron.me) — fallback to placeholder
         return `https://emortron.me/images/${id}.png`;
       }
+      function injectPrefix(desc, item) {
+        if (!desc || !desc.includes('{prefix}')) return desc;
+
+        const prefixName = item.name.replace(' Rank', '');
+
+        return desc.replace(
+          '{prefix}',
+          `<span style="color:${item.color};font-weight:800;">
+          ${prefixName}
+           </span>`
+       );
+      }
+
       /* App state */
       let categories = Object.keys(storeData);
       let activeCategory = categories[0];
@@ -1009,7 +1022,7 @@
             <div class="product-body">
             <div class="product-title" style="color:${item.color || 'var(--primary-light)'}">${item.name}
             </div>
-              <div class="product-desc">${item.description || ''}</div>
+              <div class="product-desc">${injectPrefix(item.description || '', item)}</div>
               <div class="product-footer">
                 <div class="price">${item.price ? `$${item.price.toFixed(2)}` : '—'}</div>
                 <div class="btn-row">
@@ -1033,7 +1046,9 @@
           id
         };
         document.getElementById('productModalTitle').style.color = item.color || 'var(--primary-light)';
-        document.getElementById('productModalDesc').textContent = item.description || '';
+        document.getElementById('productModalTitle').textContent = item.name || 'Viewing:'
+        let desc = injectPrefix(item.description || '', item);
+        document.getElementById('productModalDesc').innerHTML = desc;
         document.getElementById('productModalPrice').textContent = item.price ? `$${item.price.toFixed(2)}` : '—';
         const img = document.getElementById('productModalImage');
         img.src = getImageUrlFor(item.id);

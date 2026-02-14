@@ -886,10 +886,13 @@
         return text.toString().toLowerCase().replace(/\s+/g, '_').replace(/[^\w-]/g, '');
       }
 
-      function getImageUrlFor(id) {
+      function getImageUrlFor(id, tag) {
         // Similar to your helper: use first word, lowercase
         //let clean = id.split('[')[0].trim().split(' ')[0].toLowerCase();
         // try to use external path (you used emortron.me) — fallback to placeholder
+        if (tag === "Crate") {
+        return `https://emortron.me/images/${id}_thumb.png`;
+        }
         return `https://emortron.me/images/${id}.png`;
       }
       function injectPrefix(desc, item) {
@@ -1017,7 +1020,7 @@
           card.innerHTML = `
             <div class="product-media">
               <div class="ribbon">${item.tag || ''}</div>
-              <img src="${getImageUrlFor(item.id)}" alt="${item.name}" onerror="this.style.display='none'">
+              <img src="${getImageUrlFor(item.id, item.tag)}" alt="${item.name}" onerror="this.style.display='none'">
             </div>
             <div class="product-body">
             <div class="product-title" style="color:${item.color || 'var(--primary-light)'}">${item.name}

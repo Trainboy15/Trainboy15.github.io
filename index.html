@@ -221,13 +221,24 @@ async function fetchStatus() {
 
   try {
     const response = await fetch('https://api.mcsrvstat.us/3/minecraft.emortron.me');
-    if (!response.ok) throw new Error('status unavailable');
+    if (!response.ok) {
+      if (response.status >= 500) {
+        details.textContent = 'Status service is temporarily unavailable';
+      } else if (response.status === 404) {
+        details.textContent = 'Server status not found';
+      } else {
+        details.textContent = 'Unable to check status right now';
+      }
+      return;
+    }
 
     const data = await response.json();
     if (data.online) {
       let playerCount = '';
-      if (typeof data.players?.online === 'number' && typeof data.players?.max === 'number') {
-        playerCount = ` (${data.players.online}/${data.players.max} players)`;
+      const onlinePlayers = data.players?.online;
+      const maxPlayers = data.players?.max;
+      if (typeof onlinePlayers === 'number' && typeof maxPlayers === 'number') {
+        playerCount = ` (${onlinePlayers}/${maxPlayers} players)`;
       }
       details.textContent = `Server is Online${playerCount}`;
     } else {

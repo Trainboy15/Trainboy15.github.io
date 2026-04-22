@@ -152,6 +152,18 @@ button:hover, .btn:hover {
   font-weight: 600;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 footer {
   text-align: center;
   padding: 30px 12px 36px;
@@ -192,6 +204,7 @@ footer {
           <button onclick="copyIP()" id="copyIP">Copy IP</button>
           <a class="btn" href="https://test.tuffis.online/files/1_1UT13/WASM/" target="_blank" rel="noopener noreferrer">Play Now ↗</a>
         </div>
+        <span id="copyFeedback" class="sr-only" aria-live="polite"></span>
       </article>
 
       <article class="card">
@@ -211,9 +224,14 @@ footer {
 <script>
 function copyIP() {
   const button = document.getElementById('copyIP');
+  const feedback = document.getElementById('copyFeedback');
   navigator.clipboard.writeText('minecraft.emortron.me');
   button.textContent = '✓ Copied';
-  setTimeout(() => { button.textContent = 'Copy IP'; }, 900);
+  feedback.textContent = 'Server IP copied to clipboard';
+  setTimeout(() => {
+    button.textContent = 'Copy IP';
+    feedback.textContent = '';
+  }, 900);
 }
 
 async function fetchStatus() {
@@ -223,11 +241,11 @@ async function fetchStatus() {
     const response = await fetch('https://api.mcsrvstat.us/3/minecraft.emortron.me');
     if (!response.ok) {
       if (response.status >= 500) {
-        details.textContent = 'Status service is temporarily unavailable';
+        details.textContent = 'Status API is temporarily unavailable';
       } else if (response.status === 404) {
-        details.textContent = 'Server status not found';
+        details.textContent = 'Server not recognized by status service';
       } else {
-        details.textContent = 'Unable to check status right now';
+        details.textContent = 'Network error — please refresh';
       }
       return;
     }

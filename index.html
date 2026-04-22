@@ -225,9 +225,10 @@ async function fetchStatus() {
 
     const data = await response.json();
     if (data.online) {
-      const playerCount = typeof data.players?.online === 'number' && typeof data.players?.max === 'number'
-        ? ` (${data.players.online}/${data.players.max} players)`
-        : '';
+      let playerCount = '';
+      if (typeof data.players?.online === 'number' && typeof data.players?.max === 'number') {
+        playerCount = ` (${data.players.online}/${data.players.max} players)`;
+      }
       details.textContent = `Server is Online${playerCount}`;
     } else {
       details.textContent = 'Server is Offline';

@@ -245,6 +245,56 @@ a { color: inherit; text-decoration: none; }
 .status-indicator.online { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.6); }
 .status-indicator.offline { background: #f87171; }
 
+.news-header {
+  margin-top: 30px;
+  padding: 0;
+  background: transparent;
+}
+
+.news-header h2 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary-light);
+  margin-bottom: 12px;
+}
+
+.news-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.news-item {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: left;
+  backdrop-filter: blur(6px);
+  transition: transform 0.15s ease, border-color 0.2s ease;
+}
+
+.news-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(168,85,247,0.5);
+}
+
+.news-item h4 {
+  color: #f87171;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.news-item p {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+
 /* ── Info strip ── */
 .info-strip {
   position: relative;
@@ -327,11 +377,13 @@ footer {
       <span class="status-indicator" id="statusDot"></span>
       <span id="statusText">Checking server status…</span>
     </div>
-    <br>
-    <div class="hero-inner">
+
+    <div class="news-header">
       <h2>Server news</h2>
+        <div class="news-list" id="newsList">
+          <p style="color: var(--muted)">Loading news...</p>
+        </div>
     </div>
-  </div>
 </main>
 
 <section class="info-strip">
@@ -349,7 +401,7 @@ footer {
   </div>
 </section>
 
-<footer>© 2025 Skyframe SMP — All Rights Reserved.</footer>
+<footer>© 2026 Skyframe SMP — All Rights Reserved.</footer>
 
 <script>
 const SERVER_ADDRESS = 'play.skyframesmp.dev';
@@ -399,6 +451,33 @@ async function fetchStatus() {
     text.textContent = 'Unable to check status right now';
   }
 }
+
+async function loadNews() {
+  const container = document.getElementById('newsList');
+
+  try {
+    const res = await fetch('https://skyframesmp.dev/news.json'); // CHANGE THIS
+    if (!res.ok) throw new Error();
+
+    const news = await res.json();
+
+    container.innerHTML = news.map(item => `
+      <div class="news-item">
+        <h4>${item.title}</h4>
+        <p>${item.body}</p>
+        ${item.link ? `<a href="${item.link}" target="_blank">Read more →</a>` : ''}
+      </div>
+    `).join('');
+  } catch {
+    container.innerHTML = `
+      <p style="color: var(--muted)">
+        Unable to load news right now.
+      </p>
+    `;
+  }
+}
+
+loadNews();
 
 fetchStatus();
 </script>

@@ -216,9 +216,25 @@ function copyIP() {
   setTimeout(() => { button.textContent = 'Copy IP'; }, 900);
 }
 
-function fetchStatus() {
+async function fetchStatus() {
   const details = document.getElementById('detailsDiv');
-  details.textContent = 'Server is Online';
+
+  try {
+    const response = await fetch('https://api.mcsrvstat.us/3/minecraft.emortron.me');
+    if (!response.ok) throw new Error('status unavailable');
+
+    const data = await response.json();
+    if (data.online) {
+      const playerCount = typeof data.players?.online === 'number' && typeof data.players?.max === 'number'
+        ? ` (${data.players.online}/${data.players.max} players)`
+        : '';
+      details.textContent = `Server is Online${playerCount}`;
+    } else {
+      details.textContent = 'Server is Offline';
+    }
+  } catch (error) {
+    details.textContent = 'Unable to check status right now';
+  }
 }
 
 fetchStatus();

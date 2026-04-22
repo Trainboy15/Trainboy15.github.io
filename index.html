@@ -336,13 +336,16 @@ async function copyIP() {
   try {
     await navigator.clipboard.writeText(SERVER_ADDRESS);
     button.textContent = '\u2713 Copied';
+    button.setAttribute('aria-label', 'IP copied to clipboard');
     feedback.textContent = 'Server IP copied to clipboard';
   } catch {
     button.textContent = 'Copy failed';
+    button.setAttribute('aria-label', 'Copy IP failed');
     feedback.textContent = 'Clipboard access failed';
   }
   setTimeout(() => {
     button.textContent = 'Copy IP';
+    button.removeAttribute('aria-label');
     feedback.textContent = '';
   }, 1200);
 }
@@ -364,7 +367,7 @@ async function fetchStatus() {
       const o = data.players?.online;
       const m = data.players?.max;
       text.textContent = (typeof o === 'number' && typeof m === 'number')
-        ? 'Online \u2014 ' + o + '/' + m + ' players'
+        ? `Online \u2014 ${o}/${m} players`
         : 'Server is Online';
     } else {
       dot.classList.add('offline');

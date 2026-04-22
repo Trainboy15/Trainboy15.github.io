@@ -199,7 +199,7 @@ footer {
     <section class="grid">
       <article class="card">
         <h2>Join the Server</h2>
-        <span class="server-ip" id="server-ip">minecraft.emortron.me</span>
+        <span class="server-ip" id="server-ip"></span>
         <div class="actions">
           <button onclick="copyIP()" id="copyIP">Copy IP</button>
           <a class="btn" href="https://test.tuffis.online/files/1_1UT13/WASM/" target="_blank" rel="noopener noreferrer">Play Now ↗</a>
@@ -222,23 +222,32 @@ footer {
   <footer>© 2025 Skyframe SMP — All Rights Reserved.</footer>
 
 <script>
-function copyIP() {
+const SERVER_ADDRESS = 'minecraft.emortron.me';
+document.getElementById('server-ip').textContent = SERVER_ADDRESS;
+
+async function copyIP() {
   const button = document.getElementById('copyIP');
   const feedback = document.getElementById('copyFeedback');
-  navigator.clipboard.writeText('minecraft.emortron.me');
-  button.textContent = '✓ Copied';
-  feedback.textContent = 'Server IP copied to clipboard';
+  try {
+    await navigator.clipboard.writeText(SERVER_ADDRESS);
+    button.textContent = '✓ Copied';
+    feedback.textContent = 'Server IP copied to clipboard';
+  } catch (error) {
+    button.textContent = 'Copy Failed';
+    feedback.textContent = 'Clipboard access failed';
+  }
+
   setTimeout(() => {
     button.textContent = 'Copy IP';
     feedback.textContent = '';
-  }, 900);
+  }, 1200);
 }
 
 async function fetchStatus() {
   const details = document.getElementById('detailsDiv');
 
   try {
-    const response = await fetch('https://api.mcsrvstat.us/3/minecraft.emortron.me');
+    const response = await fetch(`https://api.mcsrvstat.us/3/${SERVER_ADDRESS}`);
     if (!response.ok) {
       if (response.status >= 500) {
         details.textContent = 'Status API is temporarily unavailable';

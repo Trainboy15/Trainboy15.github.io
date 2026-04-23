@@ -1,5 +1,11 @@
 [
   {
+    "title": "Test News!",
+    "body": "Just testing notifications!",
+    "link": "https://skyframesmp.dev/",
+    "color": "#11d611"
+  },
+  {
     "title": "⚠️ Server Status",
     "body": "Server is down for the foreseeable future.",
     "link": "https://discord.gg/GFsrYZqEGh",

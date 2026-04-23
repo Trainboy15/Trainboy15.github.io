@@ -83,14 +83,14 @@ function sendNewsNotification(newsTitle) {
   if (Notification.permission === "granted") {
     new Notification("Skyframe SMP News", {
       body: `New update: ${newsTitle}`,
-      icon: "https://skyframesmp.dev/favicon.png"
+      icon: "https://skyframesmp.dev"
     });
   } else if (Notification.permission !== "denied") {
     Notification.requestPermission().then((permission) => {
       if (permission === "granted") {
         new Notification("Skyframe SMP News", {
           body: `New update: ${newsTitle}`,
-          icon: "https://skyframesmp.dev/favicon.png"
+          icon: "https://skyframesmp.dev"
         });
       }
     }); // Fixed: added closing parenthesis

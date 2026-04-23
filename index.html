@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/favicon.png">
 <title>Skyframe SMP - Rule the Sky</title>
 <link rel="icon" type="image/png" href="https://mcsets.com/storage/store-logos/8p31uXLlAJGFvlES3VTy5ZkvvBIsm6IkiGK6CEzb.png">
 <style>
@@ -456,14 +457,14 @@ async function loadNews() {
   const container = document.getElementById('newsList');
 
   try {
-    const res = await fetch('https://skyframesmp.dev/news.json'); // CHANGE THIS
+    const res = await fetch('https://skyframesmp.dev/news.json');
     if (!res.ok) throw new Error();
 
     const news = await res.json();
 
     container.innerHTML = news.map(item => `
       <div class="news-item">
-        <h4>${item.title}</h4>
+        <h4 style="color: ${item.color}">${item.title}</h4>
         <p>${item.body}</p>
         ${item.link ? `<a href="${item.link}" target="_blank">Read more →</a>` : ''}
       </div>

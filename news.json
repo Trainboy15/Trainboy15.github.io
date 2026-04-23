@@ -1,5 +1,6 @@
 [
-  {
+  { 
+    "id": 1,
     "title": "Test News!",
     "body": "Just testing notifications!",
     "link": "https://skyframesmp.dev/",

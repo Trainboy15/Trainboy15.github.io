@@ -57,7 +57,7 @@ async function loadNews() {
     const news = await res.json();
     if (!news || news.length === 0) return;
 
-    const currentTopItem = news[0]; 
+    const currentTopItem = news.id; 
     const currentId = currentTopItem.id || currentTopItem.title; 
 
     // Only notify if we already had a baseline ID (prevents notification on first page load)
@@ -83,14 +83,14 @@ function sendNewsNotification(newsTitle) {
   if (Notification.permission === "granted") {
     new Notification("Skyframe SMP News", {
       body: `New update: ${newsTitle}`,
-      icon: "https://skyframesmp.dev"
+      icon: "https://skyframesmp.dev/favicon.png"
     });
   } else if (Notification.permission !== "denied") {
     Notification.requestPermission().then((permission) => {
       if (permission === "granted") {
         new Notification("Skyframe SMP News", {
           body: `New update: ${newsTitle}`,
-          icon: "https://skyframesmp.dev"
+          icon: "https://skyframesmp.dev/favicon.png"
         });
       }
     }); // Fixed: added closing parenthesis
@@ -109,3 +109,4 @@ fetchStatus();
 setInterval(fetchStatus, 10000);
 loadNews();
 setInterval(loadNews, 30000);
+sendNewsNotification("")

@@ -57,7 +57,7 @@ async function loadNews() {
     const news = await res.json();
     if (!news || news.length === 0) return;
 
-    const currentTopItem = news.id; 
+    const currentTopItem = news[0]; 
     const currentId = currentTopItem.id || currentTopItem.title; 
 
     // Only notify if we already had a baseline ID (prevents notification on first page load)
@@ -109,4 +109,3 @@ fetchStatus();
 setInterval(fetchStatus, 10000);
 loadNews();
 setInterval(loadNews, 30000);
-sendNewsNotification("")

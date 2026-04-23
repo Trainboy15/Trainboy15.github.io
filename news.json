@@ -1,18 +1,13 @@
 [
-  { 
-    "id": 1,
-    "title": "Test News!",
-    "body": "Just testing notifications!",
-    "link": "https://skyframesmp.dev/",
-    "color": "#11d611"
-  },
   {
+    "id": 2,
     "title": "⚠️ Server Status",
     "body": "Server is down for the foreseeable future.",
     "link": "https://discord.gg/GFsrYZqEGh",
     "color": "#ff5733"
   },
   {
+    "id": 1,
     "title": "New season!",
     "body": "Survival season 4!",
     "link": "https://discord.gg/GFsrYZqEGh",

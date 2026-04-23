@@ -46,6 +46,8 @@ async function fetchStatus() {
   }
 }
 
+let latestNewsId = null; // Stores the ID of the most recent news item
+
 async function loadNews() {
   const container = document.getElementById('newsList');
 
@@ -54,6 +56,20 @@ async function loadNews() {
     if (!res.ok) throw new Error();
 
     const news = await res.json();
+    if (!news || news.length === 0) return;
+
+    // --- NOTIFICATION LOGIC START ---
+    const currentTopItem = news[0]; // Assumes the first item is the newest
+    const currentId = currentTopItem.id || currentTopItem.title; 
+
+    // If this isn't the first load AND the ID is new, notify the user
+    if (latestNewsId !== null && currentId !== latestNewsId) {
+      sendNewsNotification(currentTopItem.title);
+    }
+
+    // Update the tracker to the latest ID
+    latestNewsId = currentId;
+    // --- NOTIFICATION LOGIC END ---
 
     container.innerHTML = news.map(item => `
       <div class="news-item">
@@ -63,13 +79,29 @@ async function loadNews() {
       </div>
     `).join('');
   } catch {
-    container.innerHTML = `
-      <p style="color: var(--muted)">
-        Unable to load news right now.
-      </p>
-    `;
+    container.innerHTML = `<p style="color: var(--muted)">Unable to load news.</p>`;
   }
 }
+
+// Custom send function for news
+function sendNewsNotification(newsTitle) {
+  if (Notification.permission === "granted") {
+    new Notification("Skyframe SMP News", {
+      body: `New update: ${newsTitle}`,
+      icon: "https://skyframesmp.dev/favicon.png" // Change to your actual icon
+    });
+  } else {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        new Notification("Skyframe SMP News", {
+            body: `New update: ${newsTitle}`,
+            icon: "https://skyframesmp.dev/favicon.png" // Change to your actual icon
+        });
+      }
+  }
+}
+
+fetchStatus();
+setInterval(fetchStatus, 10000);
 loadNews();
 setInterval(loadNews, 30000);
-fetchStatus();

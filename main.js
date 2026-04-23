@@ -100,6 +100,7 @@ function sendNewsNotification(newsTitle) {
       }
   }
 }
+}
 
 fetchStatus();
 setInterval(fetchStatus, 10000);

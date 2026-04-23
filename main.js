@@ -46,11 +46,10 @@ async function fetchStatus() {
   }
 }
 
-let latestNewsId = null; // Stores the ID of the most recent news item
+let latestNewsId = null;
 
 async function loadNews() {
   const container = document.getElementById('newsList');
-
   try {
     const res = await fetch('https://skyframesmp.dev/news.json');
     if (!res.ok) throw new Error();
@@ -58,18 +57,15 @@ async function loadNews() {
     const news = await res.json();
     if (!news || news.length === 0) return;
 
-    // --- NOTIFICATION LOGIC START ---
-    const currentTopItem = news[0]; // Assumes the first item is the newest
+    const currentTopItem = news[0]; 
     const currentId = currentTopItem.id || currentTopItem.title; 
 
-    // If this isn't the first load AND the ID is new, notify the user
+    // Only notify if we already had a baseline ID (prevents notification on first page load)
     if (latestNewsId !== null && currentId !== latestNewsId) {
       sendNewsNotification(currentTopItem.title);
     }
 
-    // Update the tracker to the latest ID
     latestNewsId = currentId;
-    // --- NOTIFICATION LOGIC END ---
 
     container.innerHTML = news.map(item => `
       <div class="news-item">
@@ -83,23 +79,22 @@ async function loadNews() {
   }
 }
 
-// Custom send function for news
 function sendNewsNotification(newsTitle) {
+  // Browsers will only show this if permission was already granted via a click
   if (Notification.permission === "granted") {
     new Notification("Skyframe SMP News", {
       body: `New update: ${newsTitle}`,
-      icon: "https://skyframesmp.dev/favicon.png" // Change to your actual icon
+      icon: "https://skyframesmp.dev/favicon.png"
     });
-  } else {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        new Notification("Skyframe SMP News", {
-            body: `New update: ${newsTitle}`,
-            icon: "https://skyframesmp.dev/favicon.png" // Change to your actual icon
-        });
-      }
   }
 }
+
+// ADD THIS: A way for users to enable notifications via a click
+async function enableNotifications() {
+  const permission = await Notification.requestPermission();
+  if (permission === "granted") {
+    new Notification("Notifications Enabled!", { body: "You will now see news updates here." });
+  }
 }
 
 fetchStatus();

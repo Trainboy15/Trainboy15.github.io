@@ -80,14 +80,22 @@ async function loadNews() {
 }
 
 function sendNewsNotification(newsTitle) {
-  // Browsers will only show this if permission was already granted via a click
   if (Notification.permission === "granted") {
     new Notification("Skyframe SMP News", {
       body: `New update: ${newsTitle}`,
-      icon: "https://skyframesmp.dev/favicon.png"
+      icon: "https://skyframesmp.dev"
     });
+  } else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        new Notification("Skyframe SMP News", {
+          body: `New update: ${newsTitle}`,
+          icon: "https://skyframesmp.dev"
+        });
+      }
+    }); // Fixed: added closing parenthesis
   }
-}
+} // Fixed: added closing brace
 
 // ADD THIS: A way for users to enable notifications via a click
 async function enableNotifications() {

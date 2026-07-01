@@ -51,7 +51,7 @@ let latestNewsId = null;
 async function loadNews() {
   const container = document.getElementById('newsList');
   try {
-    const res = await fetch('https://skyframesmp.dev/news.json');
+    const res = await fetch('/news.json');
     if (!res.ok) throw new Error();
 
     const news = await res.json();

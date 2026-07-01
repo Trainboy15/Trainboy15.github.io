@@ -1,9 +1,12 @@
-{
-    "id": 1,
-    "title": "Whats going on with SkyFrame",
-    "content": "SkyFrameSMP is currently offline due to personal reasons between me and my family. \n for more information, join the discord. https://discord.gg/GFsrYZqEGh",
-    "id": 2,
-    "title": "Update!",
-    "content": "Read annoucment in discord. \nhttps://discord.com/channels/1394822336967868416/1394824179282481282/1521327984449945700"
-    
-}
+[
+    {
+        "id": 2,
+        "title": "Update!",
+        "content": "Read annoucment in discord. \nhttps://discord.com/channels/1394822336967868416/1394824179282481282/1521327984449945700"
+    },
+    {
+        "id": 1,
+        "title": "Whats going on with SkyFrame",
+        "content": "SkyFrameSMP is currently offline due to personal reasons between me and my family. \nfor more information, join the discord. https://discord.gg/GFsrYZqEGh"
+    }
+]

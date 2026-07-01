@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/favicon1.png">
+<title>SkyframeSMP - Apply</title>
+<style>
+  :root {
+    --primary: #7c3aed;
+    --primary-light: #a855f7;
+    --bg-dark: #141018;
+    --text: #f5f4fb;
+    --muted: #bdb9ce;
+    --radius: 10px;
+    
+    --form-bg: rgba(20, 16, 24, 0.7);
+    --input-bg: rgba(5, 3, 7, 0.6);
+    --glow: rgba(124, 58, 237, 0.25);
+    --success: #10b981;
+    --error: #ef4444;
+  }
+
+  *, *::before, *::after { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+  }
+
+  body {
+    font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    background-image: radial-gradient(circle at 50% -20%, rgba(124, 58, 237, 0.15), transparent 60%);
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: rgba(20, 16, 24, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(189, 185, 206, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .brand {
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+    background: linear-gradient(to right, var(--text), var(--muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .topbar nav a {
+    color: var(--muted);
+    text-decoration: none;
+    margin-left: 24px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s, text-shadow 0.2s;
+  }
+  .topbar nav a:hover {
+    color: var(--text);
+    text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+  }
+
+  .app-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+  }
+  
+  .app-card {
+    width: 100%;
+    max-width: 650px;
+    background: var(--form-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    border-radius: calc(var(--radius) * 1.5);
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 50px rgba(124, 58, 237, 0.05);
+  }
+
+  .app-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--text) 30%, var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .app-header p {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 35px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    color: var(--muted);
+  }
+  
+  .form-group input, 
+  .form-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--input-bg);
+    border: 1px solid rgba(189, 185, 206, 0.15);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 110px;
+  }
+
+  .form-group input:focus, 
+  .form-group textarea:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 4px var(--glow);
+  }
+
+  .btn-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 16px;
+    background: var(--primary);
+    color: var(--text);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+    transition: background 0.25s, transform 0.1s;
+  }
+
+  .btn-submit:hover {
+    background: var(--primary-light);
+  }
+
+  .btn-submit:disabled {
+    background: rgba(189, 185, 206, 0.2);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  .form-message {
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: var(--radius);
+    text-align: center;
+    font-size: 0.95rem;
+    display: none;
+  }
+  .form-message.success {
+    display: block;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--success);
+    color: var(--success);
+  }
+  .form-message.error {
+    display: block;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--error);
+    color: var(--error);
+  }
+
+  footer {
+    padding: 30px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(189, 185, 206, 0.05);
+  }
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; gap: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand">Skyframe SMP</span>
+  <nav>
+    <a href="https://discord.gg" target="_blank">Discord</a>
+    <a href="https://skyframesmp.dev" target="_blank">Store</a>
+  </nav>
+</header>
+
+<main class="app-wrapper">
+  <div class="app-card">
+    <div class="app-header">
+      <h1>Staff Application</h1>
+      <p>Submit your application details below to join the Skyframe team.</p>
+    </div>
+    
+    <form id="appForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="username">Minecraft Username</label>
+          <input type="text" id="username" required placeholder="SkyframePlayer">
+        </div>
+        
+        <div class="form-group">
+          <label for="discord">Discord Username</label>
+          <input type="text" id="discord" required placeholder="skyframe_user">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="age">How old are you?</label>
+        <input type="text" id="age" required placeholder="17">
+      </div>
+      
+      <div class="form-group">
+        <label for="reason">Why do you want to join the staff team?</label>
+        <textarea id="reason" required placeholder="Describe your motivations..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="experience">Do you have previous staff experience?</label>
+        <textarea id="experience" required placeholder="Detail your historical roles..."></textarea>
+      </div>
+      
+      <button type="submit" class="btn-submit" id="submitBtn">Submit Application</button>
+      <div id="formResponse" class="form-message"></div>
+    </form>
+  </div>
+</main>
+
+<footer>© 2026 Skyframe SMP — All Rights Reserved.</footer>
+
+<script>
+
+  document.getElementById('appForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('submitBtn');
+    const responseDiv = document.getElementById('formResponse');
+    
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Sending application...';
+    responseDiv.className = 'form-message'; 
+    responseDiv.innerText = '';
+
+    // Collect values from fields
+    const username = document.getElementById('username').value;
+    const discord = document.getElementById('discord').value;
+    const age = document.getElementById('age').value;
+    const reason = document.getElementById('reason').value;
+    const experience = document.getElementById('experience').value;
+
+    const payload = {
+        username: username,
+        discord: discord,
+        age: age,
+        reason: reason,
+        experience: experience
+    }
+
+    try {
+      const response = await fetch('/api/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        responseDiv.classList.add('success');
+        responseDiv.innerText = 'Application successfully sent!';
+        document.getElementById('appForm').reset();
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      responseDiv.classList.add('error');
+      responseDiv.innerText = 'Could not send application. Please try again later.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Submit Application';
+    }
+  });
+</script>
+</body>
+</html>

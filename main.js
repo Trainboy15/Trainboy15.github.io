@@ -21,28 +21,43 @@ async function copyIP() {
 async function fetchStatus() {
   const dot = document.getElementById('statusDot');
   const text = document.getElementById('statusText');
+  
+  // Helper to safely update the UI classes
+  const updateVisualState = (state) => {
+    dot.classList.remove('online', 'offline');
+    dot.classList.add(state);
+  };
+
   try {
-    const res = await fetch(`https://api.mcsrvstat.us/3/${SERVER_ADDRESS}`);
+    const res = await fetch(`https://topeaglerservers.com/api/status/${SERVER_ADDRESS}`);
+    
+    // Fix: Handle failed API requests safely without breaking
     if (!res.ok) {
-      text.textContent = res.status >= 500
-        ? 'Status API unavailable'
-        : 'Unable to check status — please refresh';
+      updateVisualState('offline');
+      text.textContent = 'Status unavailable - please refresh';
       return;
     }
+
     const data = await res.json();
-    if (data.online) {
-      dot.classList.add('online');
-      const o = data.players?.online;
-      const m = data.players?.max;
-      text.textContent = typeof o === 'number' && typeof m === 'number'
-        ? `Online - ${o}/${m} players`
+
+    if (data.server.online == true) {
+      updateVisualState('online');
+      
+      const currentPlayers = data.server.players?.online;
+      const maxPlayers = data.players?.max;
+
+      // Clean check for valid numbers
+      text.textContent = Number.isInteger(currentPlayers) && Number.isInteger(maxPlayers)
+        ? `Online - ${currentPlayers}/${maxPlayers} players`
         : 'Server is Online';
     } else {
-      dot.classList.add('offline');
+      updateVisualState('offline');
       text.textContent = 'Server is currently offline.';
     }
-  } catch {
+  } catch (error) {
+    updateVisualState('offline');
     text.textContent = 'Unable to check status right now';
+    console.error('Status fetch failed:', error); // Helpful for debugging
   }
 }
 

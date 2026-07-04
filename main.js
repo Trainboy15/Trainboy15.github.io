@@ -9,7 +9,7 @@ async function copyIP() {
     button.textContent = '✓ Copied';
     feedback.textContent = 'Server IP copied to clipboard';
   } catch {
-    button.textContent = 'Copy failed';
+    button.textContent = 'Copy failed X';
     feedback.textContent = 'Clipboard access failed';
   }
   setTimeout(() => {

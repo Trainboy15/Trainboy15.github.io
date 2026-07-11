@@ -29,26 +29,24 @@ async function fetchStatus() {
   };
 
   try {
-    const res = await fetch(`https://topeaglerservers.com/api/status/${SERVER_ADDRESS}`);
+    const res = await fetch(`https://play.skyframesmp.dev`);
     
     // Fix: Handle failed API requests safely without breaking
     if (!res.ok) {
       updateVisualState('offline');
-      text.textContent = 'Status unavailable - please refresh';
+      text.textContent = 'Server offline';
       return;
     }
 
     const data = await res.json();
 
-    if (data.server.online == true) {
+    if (data.includes('SkyFrameSMP')) {
       updateVisualState('online');
       
-      const currentPlayers = data.server.players?.online;
-      const maxPlayers = data.players?.max;
-
+      
       // Clean check for valid numbers
       text.textContent = Number.isInteger(currentPlayers) && Number.isInteger(maxPlayers)
-        ? `Online - ${currentPlayers}/${maxPlayers} players`
+        ? `Online - ?/? players`
         : 'Server is Online';
     } else {
       updateVisualState('offline');

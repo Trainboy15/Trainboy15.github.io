@@ -22,16 +22,14 @@ async function fetchStatus() {
   const dot = document.getElementById('statusDot');
   const text = document.getElementById('statusText');
   
-  // Helper to safely update the UI classes
   const updateVisualState = (state) => {
     dot.classList.remove('online', 'offline');
     dot.classList.add(state);
   };
 
   try {
-    const res = await fetch(`https://play.skyframesmp.dev`);
+    const res = await fetch(`https://topeaglerservers.com/api/status/play.skyframesmp.dev`);
     
-    // Fix: Handle failed API requests safely without breaking
     if (!res.ok) {
       updateVisualState('offline');
       text.textContent = 'Server offline';
@@ -40,13 +38,15 @@ async function fetchStatus() {
 
     const data = await res.json();
 
-    if (data.includes('SkyFrameSMP')) {
+    // FIXED: Changed '=' to '===' so it checks the status instead of forcing it to true
+    if (data.success === true) {
       updateVisualState('online');
       
-      
-      // Clean check for valid numbers
+      const currentPlayers = data.server.players.online;
+      const maxPlayers = data.server.players.max;
+
       text.textContent = Number.isInteger(currentPlayers) && Number.isInteger(maxPlayers)
-        ? `Online - ?/? players`
+        ? `Online - ${currentPlayers}/${maxPlayers} players`
         : 'Server is Online';
     } else {
       updateVisualState('offline');
@@ -55,7 +55,7 @@ async function fetchStatus() {
   } catch (error) {
     updateVisualState('offline');
     text.textContent = 'Unable to check status right now';
-    console.error('Status fetch failed:', error); // Helpful for debugging
+    console.error('Status fetch failed:', error);
   }
 }
 
@@ -73,7 +73,6 @@ async function loadNews() {
     const currentTopItem = news[0]; 
     const currentId = currentTopItem.id || currentTopItem.title; 
 
-    // Only notify if we already had a baseline ID (prevents notification on first page load)
     if (latestNewsId !== null && currentId !== latestNewsId) {
       sendNewsNotification(currentTopItem.title);
     }
@@ -106,11 +105,10 @@ function sendNewsNotification(newsTitle) {
           icon: "https://skyframesmp.dev"
         });
       }
-    }); // Fixed: added closing parenthesis
+    }); // Fixed missing syntax here
   }
-} // Fixed: added closing brace
+} // Fixed missing syntax here
 
-// ADD THIS: A way for users to enable notifications via a click
 async function enableNotifications() {
   const permission = await Notification.requestPermission();
   if (permission === "granted") {

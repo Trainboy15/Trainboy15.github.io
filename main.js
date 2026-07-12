@@ -28,7 +28,7 @@ async function fetchStatus() {
   };
 
   try {
-    const res = await fetch(`https://topeaglerservers.com/api/status/play.skyframesmp.dev`);
+    const res = await fetch(`https://api.skyframesmp.dev/status`);
     
     if (!res.ok) {
       updateVisualState('offline');

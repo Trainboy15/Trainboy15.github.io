@@ -78,7 +78,7 @@
 
     // Fetch data from the Skyframe API 
     async function lookUp(playerName) { 
-      const url = `https://api.skyframesmp.dev/stats?${encodeURIComponent(playerName)}`; 
+      const url = `https://api.skyframesmp.dev/stats/${encodeURIComponent(playerName)}`; 
       const options = { method: 'GET', headers: { 'content-type': 'application/json' } }; 
       try { 
         const response = await fetch(url, options); 

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>SkyframeSMP - Stats</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="hero">
+      <div class="hero-inner">
+        <span class="hero-label">Stats</span>
+        <h1>Skyframe Stats</h1>
+        <div class="search-container">
+          <div class="search-wrapper">
+            <input type="text" class="search-input" id="search-input" placeholder="Enter a username...">
+            <div class="search-icon">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const searchInput = document.getElementById("search-input");
+
+      // Helper function to extract and run the search
+      function triggerSearch() {
+        const query = searchInput.value.trim();
+        if (query) {
+          console.log("User submitted search for:", query);
+          lookUp(query);
+        }
+      }
+
+      // Fires when pressing 'Enter' or clicking the 'x' clear button in compatible browsers
+      searchInput.addEventListener("search", triggerSearch);
+
+      // Backup listener for browsers like Firefox that don't fully support the "search" event on Enter
+      searchInput.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+          triggerSearch();
+        }
+      });
+
+      // Fetch data from the Skyframe API
+      async function lookUp(playerName) {
+        const url = `https://skyframesmp.dev/stats?${encodeURIComponent(playerName)}`;
+        const options = {
+          method: 'GET', 
+          headers: {
+            'content-type': 'application/json'
+          }
+        };
+
+        try {
+          const response = await fetch(url, options);
+          
+          if (!response.ok) {
+            throw new Error(`API error: ${response.status} ${response.statusText}`);
+          }
+          
+          const data = await response.json();
+          console.log("API Data received:", data);
+          
+          // Optional: You can pass 'data' to a function here to render it to #blog-container
+          
+        } catch (error) {
+          console.error("Failed to fetch player stats:", error);
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -4,14 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#07141c">
-  <title>Skyframe Stats</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+  <title>SkyframeSMP - Stats</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="stats-page">
   <header class="topbar">
     <a class="brand" href="./stats.html"><span class="brand-mark"><img src="/favicon.png" alt="S"></span> Skyframe SMP</a>
     <nav aria-label="Main navigation">
-      <a href="./stats.html">Stats</a>
+      <a href="#">Stats</a>
       <a href="https://skyframesmp.dev" target="_blank" rel="noreferrer">Website</a>
       <a href="https://discord.com/invite/GFsrYZqEGh" target="_blank" rel="noreferrer">Discord</a>
     </nav>
@@ -34,16 +35,6 @@
         <p class="status" id="status" role="status" aria-live="polite"></p>
       </form>
     </section>
-
-    <section aria-labelledby="directory-title">
-      <div class="section-heading"><h2 id="directory-title">The directory</h2><span>Live server data</span></div>
-      <div class="metric-strip">
-        <div class="metric"><strong>LIVE</strong><span>Database status</span></div>
-        <div class="metric"><strong>ALL</strong><span>Player records</span></div>
-        <div class="metric"><strong>24/7</strong><span>Always tracking</span></div>
-      </div>
-    </section>
-
     <dialog class="result-panel" id="result-panel" aria-labelledby="player-title">
       <div class="result-heading">
         <div><p class="result-tag">Player profile</p><h2 id="player-title">Player stats</h2><p id="result-subtitle">Current recorded values</p></div>
@@ -55,6 +46,8 @@
   <footer>SKYFRAME SMP <span aria-hidden="true">/</span> PLAYER STATISTICS</footer>
 
   <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPlayer = urlParams.get('player');
     const form = document.getElementById('search-form');
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
@@ -74,7 +67,9 @@
       event.preventDefault();
       lookUp(searchInput.value.trim());
     });
-
+    if (currentPlayer) {
+      lookUp(currentPlayer.value.trim());
+    }
     async function lookUp(playerName) {
       if (!playerName) return;
       searchButton.disabled = true;

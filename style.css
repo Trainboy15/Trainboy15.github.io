@@ -533,12 +533,15 @@ footer {
 .stats-page .metric strong { display: block; color: var(--primary-light); font-size: 1.35rem; }
 .stats-page .metric span { display: block; margin-top: 5px; color: var(--muted); font: .7rem 'DM Mono', monospace; text-transform: uppercase; }
 .stats-page .result-panel { display: none; margin: 44px 0; padding: 25px; animation: rise .35s ease both; }
-.stats-page .result-panel.visible { display: block; }
+.stats-page .result-panel[open] { display: block; width: min(720px, calc(100% - 32px)); max-height: min(720px, calc(100vh - 48px)); margin: auto; padding: 25px; color: var(--text); }
+.stats-page .result-panel::backdrop { background: rgba(8, 5, 13, .76); backdrop-filter: blur(10px); }
 .stats-page .result-panel.error { border-color: rgba(248, 113, 113, .5); }
 .stats-page .result-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, .14); }
 .stats-page .result-heading h2 { margin: 0; font-size: 1.7rem; }
 .stats-page .result-heading p { margin: 6px 0 0; color: var(--muted); }
 .stats-page .result-tag { color: var(--primary-light); font: .7rem 'DM Mono', monospace; text-transform: uppercase; }
+.stats-page .dialog-close { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(255, 255, 255, .14); border-radius: 50%; color: var(--muted); background: rgba(255, 255, 255, .05); font-size: 1.5rem; line-height: 1; cursor: pointer; }
+.stats-page .dialog-close:hover { color: var(--text); border-color: var(--primary-light); background: rgba(168, 85, 247, .16); }
 .stats-page .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 18px; }
 .stats-page .stat { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 6px; background: rgba(255, 255, 255, .065); backdrop-filter: blur(10px); }
 .stats-page .stat-key { color: var(--muted); font-size: .82rem; }
@@ -562,7 +565,7 @@ footer {
   .stats-page .metric strong { font-size: 1rem; }
   .stats-page .metric span { font-size: .58rem; }
   .stats-page .result-heading { align-items: flex-start; flex-direction: column; }
-  .stats-page .result-panel { margin-top: 30px; padding: 18px; }
+  .stats-page .result-panel[open] { width: min(100% - 28px, 560px); padding: 18px; }
 }
 @media (max-width: 420px) {
   .stats-page .brand { font-size: .76rem; }

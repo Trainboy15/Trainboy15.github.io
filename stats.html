@@ -13,7 +13,7 @@
     <nav aria-label="Main navigation">
       <a href="./stats.html">Stats</a>
       <a href="https://skyframesmp.dev" target="_blank" rel="noreferrer">Website</a>
-      <a href="https://discord.com" target="_blank" rel="noreferrer">Discord</a>
+      <a href="https://discord.gg/GFsrYZqEGh" target="_blank" rel="noreferrer">Discord</a>
     </nav>
   </header>
 
@@ -35,13 +35,22 @@
       </form>
     </section>
 
-    <section class="result-panel" id="result-panel" aria-labelledby="player-title">
+    <section aria-labelledby="directory-title">
+      <div class="section-heading"><h2 id="directory-title">The directory</h2><span>Live server data</span></div>
+      <div class="metric-strip">
+        <div class="metric"><strong>LIVE</strong><span>Database status</span></div>
+        <div class="metric"><strong>ALL</strong><span>Player records</span></div>
+        <div class="metric"><strong>24/7</strong><span>Always tracking</span></div>
+      </div>
+    </section>
+
+    <dialog class="result-panel" id="result-panel" aria-labelledby="player-title">
       <div class="result-heading">
         <div><p class="result-tag">Player profile</p><h2 id="player-title">Player stats</h2><p id="result-subtitle">Current recorded values</p></div>
-        <span class="result-tag">Verified data</span>
+        <button class="dialog-close" id="dialog-close" type="button" aria-label="Close player profile">&times;</button>
       </div>
       <div class="stats-grid" id="stats-list"></div>
-    </section>
+    </dialog>
   </main>
   <footer>SKYFRAME SMP <span aria-hidden="true">/</span> PLAYER STATISTICS</footer>
 
@@ -54,6 +63,12 @@
     const statsList = document.getElementById('stats-list');
     const playerTitle = document.getElementById('player-title');
     const resultSubtitle = document.getElementById('result-subtitle');
+    const dialogClose = document.getElementById('dialog-close');
+
+    dialogClose.addEventListener('click', () => resultPanel.close());
+    resultPanel.addEventListener('click', (event) => {
+      if (event.target === resultPanel) resultPanel.close();
+    });
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -72,10 +87,11 @@
         renderStats(await response.json());
       } catch (error) {
         status.textContent = error.message;
-        resultPanel.classList.add('visible', 'error');
+        resultPanel.classList.add('error');
         playerTitle.textContent = 'No results';
         resultSubtitle.textContent = 'Try checking the spelling and search again.';
         statsList.replaceChildren();
+        resultPanel.showModal();
       } finally {
         searchButton.disabled = false;
         searchButton.querySelector('span').textContent = 'Search';
@@ -83,7 +99,8 @@
     }
 
     function renderStats(data) {
-      playerTitle.textContent = data.name || 'Unknown player';
+      playerTitle.replaceChildren();
+      appendMinecraftText(playerTitle, data.name || 'Unknown player');
       resultSubtitle.textContent = 'Current recorded values';
       statsList.replaceChildren();
       for (const stat of Array.isArray(data.stats) ? data.stats : []) {
@@ -91,20 +108,56 @@
         item.className = 'stat';
         const label = document.createElement('span');
         label.className = 'stat-key';
-        label.textContent = stat.key;
+        label.textContent = formatStatName(stat.key);
         const value = document.createElement('strong');
         value.className = 'stat-value';
-        value.textContent = stat.value;
-        if (stat.rank) {
+        appendMinecraftText(value, String(stat.value ?? ''));
+        if (stat.rank !== null && stat.rank !== undefined && stat.rank !== '') {
           const rank = document.createElement('small');
           rank.className = 'stat-rank';
-          rank.textContent = `#${stat.rank}`;
+          if (typeof stat.rank === 'number') {
+            rank.textContent = `#${stat.rank}`;
+          } else {
+            appendMinecraftText(rank, stat.rank);
+          }
           value.appendChild(rank);
         }
         item.append(label, value);
         statsList.appendChild(item);
       }
-      resultPanel.classList.add('visible');
+      resultPanel.classList.remove('error');
+      resultPanel.showModal();
+    }
+
+    function formatStatName(key) {
+      return String(key)
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/[_-]+/g, ' ')
+        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    }
+
+    function appendMinecraftText(element, text) {
+      const colors = {
+        '0': '#000000', '1': '#0000aa', '2': '#00aa00', '3': '#00aaaa',
+        '4': '#aa0000', '5': '#aa00aa', '6': '#ffaa00', '7': '#aaaaaa',
+        '8': '#555555', '9': '#5555ff', 'a': '#55ff55', 'b': '#55ffff',
+        'c': '#ff5555', 'd': '#ff55ff', 'e': '#ffff55', 'f': '#ffffff'
+      };
+      const parts = String(text).split(/([§&][0-9a-fk-or])/gi);
+      let current = null;
+      for (const part of parts) {
+        const code = part.match(/^[§&]([0-9a-fk-or])$/i);
+        if (code) {
+          if (colors[code[1].toLowerCase()]) current = colors[code[1].toLowerCase()];
+          if (code[1].toLowerCase() === 'r') current = null;
+          continue;
+        }
+        if (!part) continue;
+        const node = document.createElement(current ? 'span' : 'span');
+        node.textContent = part;
+        if (current) node.style.color = current;
+        element.appendChild(node);
+      }
     }
   </script>
 </body>

@@ -1,80 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <title>SkyframeSMP - Stats</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <title>SkyframeSMP - Stats</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Basic styling for the modal dialog */
+    dialog {
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      max-width: 400px;
+      width: 100%;
+    }
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body> 
+  <div class="hero"> 
+    <div class="hero-inner"> 
+      <span class="hero-label">Stats</span> 
+      <h1>Skyframe Stats</h1> 
+      <div class="search-container"> 
+        <div class="search-wrapper"> 
+          <input type="text" class="search-input" id="search-input" placeholder="Enter a username..."> 
+          <div class="search-icon"> 
+            <svg viewBox="0 0 24 24"> 
+              <circle cx="11" cy="11" r="8"></circle> 
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line> 
+            </svg> 
+          </div> 
+        </div> 
+      </div> 
+    </div> 
+  </div> 
 
-  <body>
-    <div class="hero">
-      <div class="hero-inner">
-        <span class="hero-label">Stats</span>
-        <h1>Skyframe Stats</h1>
-        <div class="search-container">
-          <div class="search-wrapper">
-            <input type="text" class="search-input" id="search-input" placeholder="Enter a username...">
-            <div class="search-icon">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- Modal Dialog Element -->
+  <dialog id="stats-dialog">
+    <div id="dialog-content">
+      <h2 id="player-title">Player Stats</h2>
+      <ul id="stats-list"></ul>
     </div>
+    <button id="close-dialog" type="button">Close</button>
+  </dialog>
 
-    <script>
-      const searchInput = document.getElementById("search-input");
+  <script> 
+    const searchInput = document.getElementById("search-input");
+    const statsDialog = document.getElementById("stats-dialog");
+    const statsList = document.getElementById("stats-list");
+    const playerTitle = document.getElementById("player-title");
+    const closeButton = document.getElementById("close-dialog");
 
-      // Helper function to extract and run the search
-      function triggerSearch() {
-        const query = searchInput.value.trim();
-        if (query) {
-          console.log("User submitted search for:", query);
-          lookUp(query);
-        }
-      }
+    // Close modal when clicking the close button
+    closeButton.addEventListener("click", () => {
+      statsDialog.close();
+    });
 
-      // Fires when pressing 'Enter' or clicking the 'x' clear button in compatible browsers
-      searchInput.addEventListener("search", triggerSearch);
+    // Helper function to extract and run the search function 
+    function triggerSearch() { 
+      const query = searchInput.value.trim(); 
+      if (query) { 
+        console.log("User submitted search for:", query); 
+        lookUp(query); 
+      } 
+    } 
 
-      // Backup listener for browsers like Firefox that don't fully support the "search" event on Enter
-      searchInput.addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-          triggerSearch();
-        }
+    searchInput.addEventListener("search", triggerSearch); 
+    searchInput.addEventListener("keydown", function(event) { 
+      if (event.key === "Enter") { 
+        triggerSearch(); 
+      } 
+    }); 
+
+    // Fetch data from the Skyframe API 
+    async function lookUp(playerName) { 
+      const url = `https://api.skyframesmp.dev/stats?${encodeURIComponent(playerName)}`; 
+      const options = { method: 'GET', headers: { 'content-type': 'application/json' } }; 
+      try { 
+        const response = await fetch(url, options); 
+        if (!response.ok) { 
+          throw new Error(`API error: ${response.status} ${response.statusText}`); 
+        } 
+        const data = await response.json(); 
+        console.log("API Data received:", data); 
+        
+        // Render data and open modal
+        renderStats(data);
+      } catch (error) { 
+        console.error("Failed to fetch player stats:", error); 
+      } 
+    } 
+
+    // Function to inject data into the modal and show it
+    function renderStats(data) {
+      playerTitle.textContent = `Stats for ${data.name}`;
+      statsList.innerHTML = ""; // Clear old stats
+
+      data.stats.forEach(stat => {
+        const li = document.createElement("li");
+        li.textContent = `${stat.key}: ${stat.value}`;
+        statsList.appendChild(li);
       });
 
-      // Fetch data from the Skyframe API
-      async function lookUp(playerName) {
-        const url = `https://skyframesmp.dev/stats?${encodeURIComponent(playerName)}`;
-        const options = {
-          method: 'GET', 
-          headers: {
-            'content-type': 'application/json'
-          }
-        };
-
-        try {
-          const response = await fetch(url, options);
-          
-          if (!response.ok) {
-            throw new Error(`API error: ${response.status} ${response.statusText}`);
-          }
-          
-          const data = await response.json();
-          console.log("API Data received:", data);
-          
-          // Optional: You can pass 'data' to a function here to render it to #blog-container
-          
-        } catch (error) {
-          console.error("Failed to fetch player stats:", error);
-        }
-      }
-    </script>
-  </body>
+      statsDialog.showModal(); // Opens the dialog as a modal
+    }
+  </script> 
+</body> 
 </html>

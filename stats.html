@@ -28,7 +28,7 @@
       <form class="search-card" id="search-form">
         <label class="search-card-label" for="search-input">Look up a player</label>
         <div class="search-wrapper">
-          <input class="search-input" id="search-input" type="search" placeholder="Username" autocomplete="off" required>
+          <input class="search-input" id="search-input" type="text" placeholder="Username" autocomplete="off" required>
           <button class="search-button" id="search-button" type="submit"><span>Search</span><span aria-hidden="true">&#8599;</span></button>
         </div>
         <p class="search-hint">Press enter to search the live database</p>
@@ -42,7 +42,7 @@
       </div>
       <div class="stats-grid" id="stats-list"></div>
       <div class="result-heading">
-        <button class="dialog-close" id="share-card" type="button" aria-label="Make share code">Share</button>
+        <button class="btn-ghost" id="share-card" type="button" aria-label="Make share code">Share</button>
       </div>
     </dialog>
   </main>
@@ -75,8 +75,7 @@
       lookUp(currentPlayer);
     }
     shareButton.addEventListener("click", (event) => {
-      event.preventDefault();
-      copyShareCode("skyframesmp.dev/stats?player="+searchInput.value.trim())
+      copyShareCode("skyframesmp.dev/stats?player="+searchInput.value)
     });
     async function copyShareCode(code) {
       try {

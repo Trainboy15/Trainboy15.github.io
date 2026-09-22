@@ -28,7 +28,7 @@ async function fetchStatus() {
   };
 
   try {
-    const res = await fetch(`https://api.skyframesmp.dev/status`);
+    const res = await fetch(`https://beacon.skyframesmp.dev/status`);
     
     if (!res.ok) {
       updateVisualState('offline');

@@ -12,8 +12,7 @@
 <header class="topbar">
   <span class="brand">Skyframe SMP</span>
   <nav>
-    <a href="https://discord.gg/GFsrYZqEGh" target="_blank" rel="noopener noreferrer" id="discord-button">Discord</a>
-    <script>(async () => { try { const res = await fetch('https://discord.com/api/v9/invites/GFsrYZqEGh?with_counts=true'); const data = await res.json(); document.getElementById('discord-button').textContent = `Discord (${data.approximate_member_count} member | ${data.approximate_presence_count} online)` } catch (err) { console.error(err); } })();</script>
+    <a href="https://discord.gg/GFsrYZqEGh" target="_blank" rel="noopener noreferrer">Discord</a>
     <a href="https://store.skyframesmp.dev" target="_blank" rel="noopener noreferrer">Store</a>
     <a href="https://skyframesmp.dev/stats" target="_blank" rel="noopener noreferrer">Stats</a>
   </nav>
@@ -21,7 +20,7 @@
 
 <main class="hero">
   <div class="hero-inner">
-    <span class="hero-label">Eaglercraft 1.12.2</span>
+    <span class="hero-label">Minecraft Server</span>
     <div class="logo">
       <img src="https://skyframesmp.dev/favicon.png">
     </div>
@@ -30,21 +29,31 @@
 
     <div class="join-row">
       <div class="ip-pill">
-        .
+        
         <span id="server-ip"></span>
       </div>
       <button class="btn-ghost" onclick="copyIP()" id="copyIP">Copy IP</button>
-      <a class="btn-primary" href="https://test.tuffis.online/files/1_1UT13/WASM/" target="_blank" rel="noopener noreferrer">
+      <a class="btn-primary" href="https://beta.tuffclient.com/files/1_1UT15/WASM/" target="_blank" rel="noopener noreferrer">
         Play Now ↗
       </a>
     </div>
     <span id="copyFeedback" class="sr-only" aria-live="polite"></span>
     <div class="status-badge">
       <span class="status-indicator" id="statusDot"></span>
-      <span id="statusText">Checking server status…</span>
+      <span id="statusText">Checking server status...</span>
+    </div>
+    <br>
+    <div class="status-badge" style="padding-top:10px;">
+      <a class="btn-ghost" href="#discord-section">Start exploring!</a>
     </div>
 </main>
+<section class="discord-section" id="discord-section" >
 
+    <h2>Discord</h2>
+    <p id="discord-stats">Getting Discord info...</p>
+    <a class="btn-primary" href="https://discord.gg/GFsrYZqEGh">Join now!</a>
+
+</section>
 <section class="info-strip">
   <div class="info-item">
     <h3>Game Modes</h3>
@@ -62,5 +71,6 @@
 
 <footer>© 2026 Skyframe SMP — All Rights Reserved.</footer>
 <script src="main.js"></script>
+<script>(async () => { try { const res = await fetch('https://discord.com/api/v9/invites/GFsrYZqEGh?with_counts=true'); const data = await res.json(); document.getElementById('discord-stats').textContent = `${data.approximate_member_count} members | ${data.approximate_presence_count} online` } catch (err) { console.error(err); } })();</script>
 </body>
 </html>

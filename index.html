@@ -71,6 +71,6 @@
 
 <footer>© 2026 Skyframe SMP — All Rights Reserved.</footer>
 <script src="main.js"></script>
-<script>(async () => { try { const res = await fetch('https://discord.com/api/v9/invites/GFsrYZqEGh?with_counts=true'); const data = await res.json(); document.getElementById('discord-stats').textContent = `${data.approximate_member_count} members | ${data.approximate_presence_count} online` } catch (err) { console.error(err); } })();</script>
+<script>(async () => { try { const res = await fetch('https://discord.com/api/v9/invites/GFsrYZqEGh?with_counts=true'); const data = await res.json(); document.getElementById('discord-stats').textContent = `${data.approximate_member_count-9} members | ${data.approximate_presence_count-9} online` } catch (err) { console.error(err); } })();</script>
 </body>
 </html>

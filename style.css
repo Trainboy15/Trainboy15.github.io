@@ -47,7 +47,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 0 6%;
-  height: 56px;
+  height: 70px;
   background: rgba(20, 16, 24, 0.65);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -80,6 +80,37 @@ a {
   color: var(--text);
 }
 
+/* Topbar Layout Container */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Keeps brand on left, nav stretching right */
+  padding: 1rem 2rem;
+  background-color: #121214;     /* Deep dark background */
+}
+
+/* Centered Navigation Links */
+.topbar .nav-center {
+  justify-content: center;
+  align-items: center;
+  padding-right: 250px;
+  gap: 2rem;                     /* Clean, uniform spacing between links */
+  flex-grow: 1;                  /* Forces navigation to fill space and center properly */
+}
+
+/* Navigation Links Styling */
+.topbar .nav-center a {
+  color: #a3a3ec;                /* Soft purple-tint text */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.topbar .nav-center a:hover {
+  color: #7c4dff;                /* Vibrant purple matching your branding on hover */
+}
+
+
 /* ── Hero ── */
 .hero {
   position: relative;
@@ -89,7 +120,7 @@ a {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 80px 24px 60px;
+  padding: 80px 9px 60px;
   overflow: hidden;
 }
 
@@ -133,6 +164,7 @@ a {
   position: relative;
   z-index: 1;
   max-width: 740px;
+  padding-top: 30px;
   width: 100%;
 }
 
@@ -182,8 +214,9 @@ a {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  padding-top: 5px;
   gap: 14px;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
 }
 
 .ip-pill {
@@ -305,6 +338,7 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  padding-bottom: 15px;
   font-size: 0.82rem;
   color: var(--muted);
 }

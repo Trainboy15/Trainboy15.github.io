@@ -9,7 +9,7 @@ async function copyIP() {
     button.textContent = '✓ Copied';
     feedback.textContent = 'Server IP copied to clipboard';
   } catch {
-    button.textContent = 'Copy failed X';
+    button.textContent = 'Copy failed';
     feedback.textContent = 'Clipboard access failed';
   }
   setTimeout(() => {
@@ -88,31 +88,6 @@ async function loadNews() {
     `).join('');
   } catch {
     container.innerHTML = `<p style="color: var(--muted)">Unable to load news.</p>`;
-  }
-}
-
-function sendNewsNotification(newsTitle) {
-  if (Notification.permission === "granted") {
-    new Notification("Skyframe SMP News", {
-      body: `New update: ${newsTitle}`,
-      icon: "https://skyframesmp.dev"
-    });
-  } else if (Notification.permission !== "denied") {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        new Notification("Skyframe SMP News", {
-          body: `New update: ${newsTitle}`,
-          icon: "https://skyframesmp.dev"
-        });
-      }
-    }); // Fixed missing syntax here
-  }
-} // Fixed missing syntax here
-
-async function enableNotifications() {
-  const permission = await Notification.requestPermission();
-  if (permission === "granted") {
-    new Notification("Notifications Enabled!", { body: "You will now see news updates here." });
   }
 }
 

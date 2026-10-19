@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Official site for SkyFrameSMP. A community-first SMP built for adventure. Jump in, build your legacy, and rise to the top.">
+  <link rel="icon" type="image/png" href="/favicon-orange.webp">
+  <title>SkyframeSMP - Rule the Sky</title>
+  
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --primary-light: #c084fc;
+      --accent: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Inter, 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Decorative glow orbs */
+    .hero::before, 
+    .hero::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(110px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero::before {
+      width: 540px;
+      height: 540px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.25) 0%, transparent 70%);
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .hero::after {
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+      bottom: -10%;
+      right: 10%;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 740px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Status badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #6b7280;
+      flex-shrink: 0;
+    }
+
+    .status-indicator.online {
+      background: #4ade80;
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+    }
+
+    .status-indicator.offline {
+      background: #f87171;
+      box-shadow: 0 0 8px rgba(248, 113, 113, 0.6);
+    }
+
+    .hero-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--primary-light);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: 999px;
+      padding: 5px 14px;
+      margin-bottom: 1.5rem;
+      background: rgba(168, 85, 247, 0.08);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 7vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      background: linear-gradient(160deg, #fff 40%, rgba(168, 85, 247, 0.9) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero .sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="hero">
+    <div class="hero-inner">
+      <span class="hero-label">SkyFrameSMP</span>
+      <h1>Rule the Sky</h1>
+      <p class="sub">A community-first SMP built for adventure. Jump in, build your legacy, and rise to the top.</p>
+      <br>
+      <div class="status-badge">
+        <span class="status-indicator" id="statusDot"></span>
+        <span id="statusText">Checking server status...</span>
+      </div>
+
+      
+      
+    </div>
+  </main>
+
+  <script>
+    async function fetchStatus() {
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      
+      const updateVisualState = (state) => {
+        dot.className = 'status-indicator ' + state;
+      };
+
+      try {
+        const res = await fetch(`https://beacon.skyframesmp.dev/status`);
+        if (!res.ok) {
+          updateVisualState('offline');
+          text.textContent = 'Server offline';
+          return;
+        }
+        
+        const data = await res.json();
+        if (data.success === true) {
+          updateVisualState('online');
+          const currentPlayers = data.server?.players?.online;
+          const maxPlayers = data.server?.players?.max;
+          
+          text.textContent = Number.isInteger(currentPlayers) && Number.isInteger(maxPlayers)
+            ? `Online — ${currentPlayers}/${maxPlayers} players`
+            : 'Server Online';
+        } else {
+          updateVisualState('offline');
+          text.textContent = 'Server offline';
+        }
+      } catch (error) {
+        updateVisualState('offline');
+        text.textContent = 'Connection error';
+        console.error('Status fetch failed:', error);
+      }
+    }
+
+    // Run status check on load
+    window.addEventListener('DOMContentLoaded', fetchStatus);
+  </script>
+</body>
+</html>

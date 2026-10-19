@@ -61,37 +61,8 @@ async function fetchStatus() {
 
 let latestNewsId = null;
 
-async function loadNews() {
-  const container = document.getElementById('newsList');
-  try {
-    const res = await fetch('/news.json');
-    if (!res.ok) throw new Error();
 
-    const news = await res.json();
-    if (!news || news.length === 0) return;
-
-    const currentTopItem = news[0]; 
-    const currentId = currentTopItem.id || currentTopItem.title; 
-
-    if (latestNewsId !== null && currentId !== latestNewsId) {
-      sendNewsNotification(currentTopItem.title);
-    }
-
-    latestNewsId = currentId;
-
-    container.innerHTML = news.map(item => `
-      <div class="news-item">
-        <h4 style="color: ${item.color}">${item.title}</h4>
-        <p>${item.body}</p>
-        ${item.link ? `<a href="${item.link}" target="_blank">Read more →</a>` : ''}
-      </div>
-    `).join('');
-  } catch {
-    container.innerHTML = `<p style="color: var(--muted)">Unable to load news.</p>`;
-  }
-}
 
 fetchStatus();
 setInterval(fetchStatus, 10000);
-loadNews();
 setInterval(loadNews, 30000);

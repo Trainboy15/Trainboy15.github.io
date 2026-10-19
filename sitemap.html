@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Sitemap</title>
+    <style>
+        :root {
+      --bg-dark: #0b0f19;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --primary-light: #c084fc;
+      --accent: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+        body {
+            font-family:
+                Inter,
+                'Segoe UI',
+                system-ui,
+                -apple-system,
+                sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            padding: 3rem 1.5rem;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            font-size: 1.75rem;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        /* Sitemap Core List Styling */
+        nav[aria-label="Sitemap"] ul {
+            list-style-type: none;
+        }
+
+        /* Top-level structure */
+        nav[aria-label="Sitemap"] > ul > li {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        nav[aria-label="Sitemap"] > ul > li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Links and Categories */
+        a, span {
+            display: inline-block;
+            font-weight: 600;
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.35rem 0.6rem;
+            border-radius: calc(var(--radius) / 2);
+            transition: all 0.2s ease-in-out;
+        }
+
+        a:hover {
+            color: var(--primary-light);
+            background-color: rgba(124, 58, 237, 0.15);
+            transform: translateX(4px);
+        }
+
+        /* Nested Sub-menus */
+        nav[aria-label="Sitemap"] ul ul {
+            padding-left: 1.5rem;
+            margin-top: 0.5rem;
+            border-left: 2px solid rgba(124, 58, 237, 0.3);
+        }
+
+        nav[aria-label="Sitemap"] ul ul li {
+            margin-bottom: 0.4rem;
+        }
+
+        nav[aria-label="Sitemap"] ul ul li:last-child {
+            margin-bottom: 0;
+        }
+
+        nav[aria-label="Sitemap"] ul ul a {
+            font-weight: 400;
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <h1>Website Sitemap</h1>
+        <nav aria-label="Sitemap">
+            <ul>
+                <!-- Homepage -->
+                <li><a href="/">Home</a></li>
+                <!-- Services Section -->
+                <li>
+                    <a>Services</a>
+                    <ul>
+                        <li><a href="/stats">Player Stats API</a></li>
+                        <li><a href="/count">Live player count</a></li>
+                    </ul>
+                </li>
+
+                <!-- Blog Section -->
+                <li>
+                    <a href="/store">Store</a>
+                </li>
+
+                <li>
+                    <a href="/sitemap">Sitemap (this page)</a>
+                </li>
+
+                <!-- Static Pages -->
+                <li><a href="https://discord.gg/GFsrYZqEGh">Discord</a></li>
+
+            </ul>
+        </nav>
+    </main>
+
+</body>
+</html>

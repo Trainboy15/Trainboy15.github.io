@@ -61,6 +61,7 @@ a {
   background: linear-gradient(90deg, var(--primary-light), #e8b4ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  size: 64px;
   background-clip: text;
 }
 

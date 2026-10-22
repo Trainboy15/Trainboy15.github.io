@@ -65,7 +65,6 @@ let latestNewsId = null;
 
 fetchStatus();
 setInterval(fetchStatus, 10000);
-setInterval(loadNews, 30000);
 // 1. Set your target future date and time
 const targetDate = new Date("Oct 24, 2026 12:00:00").getTime();
 

@@ -55,7 +55,6 @@ async function fetchStatus() {
   } catch (error) {
     updateVisualState('offline');
     text.textContent = 'Unable to check status right now';
-    console.error('Status fetch failed:', error);
   }
 }
 

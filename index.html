@@ -35,7 +35,7 @@
             <p class="sub">A community-first SMP built for adventure. Jump in, build your legacy, and rise to the top.</p>
             
             <div class="countDown">
-                <h2 id="countDown">3d 14h 20m</h2>
+                <h2 id="countDown">--d --h --m --s</h2>
                 <p class="sub">Until new season</p>
             </div>
 
@@ -103,7 +103,6 @@
                 const online = data.approximate_presence_count ?? 0;
                 document.getElementById('discord-stats').textContent = `${members.toLocaleString()} members | ${online.toLocaleString()} online`;
             } catch (err) {
-                console.error(err);
                 document.getElementById('discord-stats').textContent = "Join our active Discord community!";
             }
         })();

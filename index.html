@@ -1,116 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Official site for SkyFrameSMP. A community-first SMP built for adventure. Jump in, build your legacy, and rise to the top.">
-  <link rel="icon" type="image/png" href="/favicon.png">
-  <title>SkyFrameSMP</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Official site for SkyFrameSMP. A community-first SMP built for adventure. Jump in, build your legacy, and rise to the top.">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <title>SkyFrameSMP</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
-  <header class="topbar">
-    <a href="#" class="brand" aria-label="Skyframe SMP Home">
-      <a class="brand" href="/"><span class="brand-mark"><img src="/favicon.png" alt="S"></span>Skyframe SMP</a>
-    </a>
-   <nav class="nav-center" aria-label="Main Navigation">
-      <a href="https://discord.gg/GFsrYZqEGh" target="_blank" rel="noopener noreferrer"><u>Discord</u></a>
-      <a href="https://store.skyframesmp.dev" target="_blank" rel="noopener noreferrer"><u>Store</u></a>
-      <a href="https://skyframesmp.dev/stats" target="_blank" rel="noopener noreferrer"><u>Stats</u></a>
-    </nav>
-  </header>
-
-  <!-- Hero Landing Section -->
-  <main class="hero">
-    <div class="hero-inner">
-      <span class="hero-label">SkyFrameSMP</span>
-      
-      <div class="logo">
-        <img src="/favicon.png" alt="Skyframe Logo">
-      </div>
-      
-      <h1>Rule the Sky</h1>
-      <p class="sub">A community-first SMP built for adventure. Jump in, build your legacy, and rise to the top.</p>
-      <div class="countDown">
-        <h2 id="countDown">3d 14h 20m</h3>
-        <p class="sub">Until new season</p>
-      </div>
-      <!-- Action Row (IP & Play Controls) -->
-      <div class="join-row">
-        <div class="ip-pill">
-          <span id="server-ip" aria-label="Server IP Address">play.skyframesmp.dev</span>
-        </div>
-        <button class="btn-ghost" onclick="copyIP()" id="copyIP">Copy IP</button>
-        <a class="btn-primary" href="https://beta.tuffclient.com/files/1_1UT15/WASM/" target="_blank" rel="noopener noreferrer">
-          Play Now ↗
+    <!-- Top Navigation Header -->
+    <header class="topbar">
+        <a class="brand" href="/" aria-label="Skyframe SMP Home">
+            <span class="brand-mark"><img src="/favicon.png" alt="S"></span>Skyframe SMP
         </a>
-      </div>
-      
-      <span id="copyFeedback" class="sr-only" aria-live="polite"></span>
-      
-      <!-- Operational Status -->
-      <div class="status-badge">
-        <span class="status-indicator" id="statusDot"></span>
-        <span id="statusText">Checking server status...</span>
-      </div>
+        <nav class="nav-container">
+  <a href="https://discord.gg/GFsrYZqEGh" class="nav-item">Discord</a>
+  <a href="https://store.skyframesmp.dev/" class="nav-item">Store</a>
+  <a href="/stats" class="nav-item">Stats</a>
+</nav>
 
-      <div class="explore-prompt">
-        <a class="btn-ghost scroll-link" href="#discord-section">Start exploring! ↓</a>
-      </div>
-    </div> <!-- Fixed previously missing closing tag -->
-  </main>
-
-  <!-- Discord Profile Summary Box -->
-  <section class="discord-section" id="discord-section">
-    <h2>Discord Community</h2>
-    <p id="discord-stats" class="stats-loading">Fetching community metrics...</p>
-    <a class="btn-primary" href="https://discord.gg/GFsrYZqEGh" target="_blank" rel="noopener noreferrer">Join Now</a>
-  </section>
-
-  <!-- Feature Information Strip -->
-  <section class="info-strip">
-    <article class="info-item">
-      <h3>Game Modes</h3>
-      <p>Survival - Classic SMP</p>
-    </article>
-    
-    <article class="info-item">
-      <h3>Community</h3>
-      <p>Join us on our <a href="https://discord.gg/GFsrYZqEGh" target="_blank" rel="noopener noreferrer">Discord server</a> to track upcoming changes, seasonal community updates, and server events.</p>
-    </article>
-    
-    <article class="info-item">
-      <h3>Support the Server</h3>
-      <p>Unlock custom ranks, key bundles, and reward crates in our official <a href="https://store.skyframesmp.dev" target="_blank" rel="noopener noreferrer">Web Store</a> to help keep Skyframe online.</p>
-    </article>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <p>© 2026 Skyframe SMP — All Rights Reserved.</p>
-  </footer>
-
-  <!-- Scripts -->
-  <script src="main.js"></script>
-  <script>
-    (async () => {
-      try {
-        const res = await fetch('https://discord.com/api/v9/invites/GFsrYZqEGh?with_counts=true');
-        if (!res.ok) throw new Error('API down');
-        const data = await res.json();
         
-        // Formats data gracefully without assuming count sizes
-        const members = data.approximate_member_count ?? 0;
-        const online = data.approximate_presence_count ?? 0;
-        
-        document.getElementById('discord-stats').textContent = `${members.toLocaleString()} members | ${online.toLocaleString()} online`;
-      } catch (err) {
-        console.error(err);
-        document.getElementById('discord-stats').textContent = "Join our active Discord community!";
-      }
-    })();
-  </script>
+    </header>
+
+    <!-- Hero Landing Section -->
+    <main class="hero">
+        <div class="hero-inner">
+            <span class="hero-label">SkyFrameSMP</span>
+            <div class="logo">
+                <img src="/favicon.png" alt="Skyframe Logo">
+            </div>
+            <h1>Rule the Sky</h1>
+            <p class="sub">A community-first SMP built for adventure. Jump in, build your legacy, and rise to the top.</p>
+            
+            <div class="countDown">
+                <h2 id="countDown">3d 14h 20m</h2>
+                <p class="sub">Until new season</p>
+            </div>
+
+            <!-- Action Row (IP & Play Controls) -->
+            <div class="join-row">
+                <div class="ip-pill">
+                    <span id="server-ip" aria-label="Server IP Address">play.skyframesmp.dev</span>
+                </div>
+                <button class="btn-ghost" onclick="copyIP()" id="copyIP">Copy IP</button>
+                <a class="btn-primary" href="https://beta.tuffclient.com/files/1_1UT15/WASM/" target="_blank" rel="noopener noreferrer">
+                    Play Now ↗
+                </a>
+            </div>
+            <span id="copyFeedback" class="sr-only" aria-live="polite"></span>
+
+            <!-- Operational Status -->
+            <div class="status-badge">
+                <span class="status-indicator" id="statusDot"></span>
+                <span id="statusText">Checking server status...</span>
+            </div>
+
+            <div class="explore-prompt">
+                <a class="btn-ghost scroll-link" href="#discord-section">Start exploring! ↓</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Discord Profile Summary Box -->
+    <section class="discord-section" id="discord-section">
+        <h2>Discord Community</h2>
+        <p id="discord-stats" class="stats-loading">Fetching community metrics...</p>
+        <a class="btn-primary" href="https://discord.gg/GFsrYZqEGh" target="_blank" rel="noopener noreferrer">Join Now</a>
+    </section>
+
+    <!-- Feature Information Strip -->
+    <section class="info-strip">
+        <article class="info-item">
+            <h3>Game Modes</h3>
+            <p>Survival - Classic SMP</p>
+        </article>
+        <article class="info-item">
+            <h3>Community</h3>
+            <p>Join us on our <a href="https://discord.gg/GFsrYZqEGh" target="_blank" rel="noopener noreferrer">Discord server</a> to track upcoming changes, seasonal community updates, and server events.</p>
+        </article>
+        <article class="info-item">
+            <h3>Support the Server</h3>
+            <p>Unlock custom ranks, key bundles, and reward crates in our official <a href="https://store.skyframesmp.dev" target="_blank" rel="noopener noreferrer">Web Store</a> to help keep Skyframe online.</p>
+        </article>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Skyframe SMP — All Rights Reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="main.js"></script>
+    <script>
+        (async () => {
+            try {
+                const res = await fetch('https://discord.com/api/v9/invites/GFsrYZqEGh?with_counts=true');
+                if (!res.ok) throw new Error('API down');
+                const data = await res.json();
+                const members = data.approximate_member_count ?? 0;
+                const online = data.approximate_presence_count ?? 0;
+                document.getElementById('discord-stats').textContent = `${members.toLocaleString()} members | ${online.toLocaleString()} online`;
+            } catch (err) {
+                console.error(err);
+                document.getElementById('discord-stats').textContent = "Join our active Discord community!";
+            }
+        })();
+    </script>
 </body>
 </html>

@@ -6,9 +6,11 @@
   --muted: #bdb9ce;
   --radius: 10px;
 }
+
 html {
     scroll-behavior: smooth;
 }
+
 *,
 *::before,
 *::after {
@@ -29,6 +31,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  padding-top: 70px; /* Prevents hero content from slipping under fixed topbar */
 }
 
 a {
@@ -36,7 +39,7 @@ a {
   text-decoration: none;
 }
 
-/* ── Top Nav ── */
+/* ── Top Navigation Bar ── */
 .topbar {
   position: fixed;
   top: 0;
@@ -46,70 +49,103 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 6%;
+  padding: 0 4%;
   height: 70px;
-  background: rgba(20, 16, 24, 0.65);
+  background: rgba(20, 16, 24, 0.8);
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* Brand/Logo Layout (Left Column) */
 .topbar .brand {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   background: linear-gradient(90deg, var(--primary-light), #e8b4ff);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  size: 64px;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.topbar nav {
+.topbar .brand-mark img {
+  display: block;
+  height: 24px;
+  width: auto;
+}
+
+/* The outer container holding all tabs */
+.nav-container {
   display: flex;
-  gap: 28px;
+
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 2px;
 }
 
-.topbar nav a {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: var(--muted);
-  transition: color 0.2s;
-}
-
-.topbar nav a:hover {
+/* Base style for every button/tab */
+.nav-item {
   color: var(--text);
+  text-decoration: none;
+  background: transparent;  
+  border-color: rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 24px;
+  position: relative;
+  transition: color 0.2s ease;
 }
 
-/* Topbar Layout Container */
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Keeps brand on left, nav stretching right */
-  padding: 1rem 2rem;
-  background-color: #121214;     /* Deep dark background */
+/* Divider lines between the items */
+.nav-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background-color: #2a2a2a;
 }
 
-/* Centered Navigation Links */
+/* Hover effect */
+.nav-item:hover {
+  color: var(--primary-light);
+}
+
+
+
+/* Navigation Links (True Center Column) */
 .topbar .nav-center {
+  display: flex;
   justify-content: center;
   align-items: center;
-  padding-right: 250px;
-  gap: 2rem;                     /* Clean, uniform spacing between links */
-  flex-grow: 1;                  /* Forces navigation to fill space and center properly */
+  gap: 2rem;
 }
 
-/* Navigation Links Styling */
 .topbar .nav-center a {
-  color: #a3a3ec;                /* Soft purple-tint text */
-  text-decoration: none;
+  font-size: 0.88rem;
   font-weight: 500;
+  color: #a3a3ec;
+  text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .topbar .nav-center a:hover {
-  color: #7c4dff;                /* Vibrant purple matching your branding on hover */
+  color: var(--primary-light);
 }
+
+/* Spacer Column to perfectly balance flexbox layout on the right */
+.topbar::after {
+  content: '';
+  flex: 1;
+  display: block;
+}
+
 
 
 /* ── Hero ── */
@@ -334,6 +370,28 @@ a {
   background: rgba(168, 85, 247, 0.08);
 }
 
+.btn-ghost-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 0px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9px;
+  padding: 7px 20px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-ghost-box:hover {
+  border-color: rgba(168, 85, 247, 0.5);
+  background: rgba(168, 85, 247, 0.08);
+}
 /* Status badge */
 .status-badge {
   display: inline-flex;

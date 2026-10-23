@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#07141c">
     <link rel="icon" type="image/png" href="/favicon.png">
-  <meta name="description" content="Official site for SkyFrameSMP. Look up a player to view their stats!">
+  <meta name="description" content="Official stats api for SkyFrameSMP. Look up a player to view their stats!">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="SkyFrameSMP Stats">
+<meta property="og:description" content="Type a player's username on our official database to view their live stats!">
+<meta property="og:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1Fi7LCuYB2dy6GJBX6FwlIQ6NH48wTij_BMKuWZ2fPw&s=10"> <!-- Use a clean 1200x630 banner -->
+<meta name="theme-color" content="#5865F2"> <!-- Changes the sidebar color of the Discord embed! -->
   <title>SkyFrameSMP · Stats</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -86,6 +91,7 @@
     }
     shareButton.addEventListener("click", (event) => {
       copyShareCode("https://skyframesmp.dev/stats?player="+searchInput.value)
+      document.querySelector('meta[name="description"]').setAttribute('content', `Stats for: ${searchInput.value}`);
     });
     async function copyShareCode(code) {
       try {

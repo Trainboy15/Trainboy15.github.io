@@ -128,13 +128,33 @@
     function renderStats(data) {
       playerTitle.replaceChildren();
       shareButton.style.display = '';
+
+      // 1. Find and extract the rank object from the array
+      const statsArray = Array.isArray(data.stats) ? [...data.stats] : [];
+      const rankIndex = statsArray.findIndex(stat => stat.key === "rank");
+
+      let playerRankText = '&7NONE'; // Default fallback
+      if (rankIndex !== -1) {
+        const rankObj = statsArray[rankIndex];
+        // If the value is just '&7' or empty, default to gray NONE
+        if (rankObj.value && rankObj.value !== '&7') {
+          playerRankText = rankObj.value;
+        }
+        // Remove it from the array so it doesn't render as a standard stat row
+        statsArray.splice(rankIndex, 1); 
+      }
+    
+      // 2. Render Player Title + Rank Badge
       appendMinecraftText(playerTitle, data.name || 'Unknown player');
+      const rankBadge = document.createElement('small');
+      rankBadge.className = 'player-rank-badge';
+      appendMinecraftText(rankBadge, ` [${playerRankText}]`);
+      playerTitle.appendChild(rankBadge);
+    
       resultSubtitle.textContent = 'Current recorded values';
       statsList.replaceChildren();
     
-      // Safeguard array iteration
-      const statsArray = Array.isArray(data.stats) ? data.stats : [];
-    
+      // 3. Render the remaining leaderboard stats
       for (const stat of statsArray) {
         const item = document.createElement('div');
         item.className = 'stat';
@@ -147,20 +167,12 @@
         value.className = 'stat-value';
         appendMinecraftText(value, formatDisplayValue(stat.key, stat.value));
       
-        // Handle rank display logically
+        // Append leaderboard numerical positions if they exist
         if (stat.rank !== null && stat.rank !== undefined && stat.rank !== '') {
-          const rank = document.createElement('small');
-          rank.className = 'stat-rank';
-        
-          if (stat.rank === '&7') {
-            appendMinecraftText(rank, '&7NONE');
-          } else if (typeof stat.rank === 'number') {
-            rank.textContent = `#${stat.rank}`;
-          } else {
-            appendMinecraftText(rank, stat.rank);
-          }
-          
-          value.appendChild(rank);
+          const rankElement = document.createElement('small');
+          rankElement.className = 'stat-rank';
+          rankElement.textContent = `#${stat.rank}`;
+          value.appendChild(rankElement);
         }
       
         item.append(label, value);
@@ -229,19 +241,28 @@
         '8': '#555555', '9': '#5555ff', 'a': '#55ff55', 'b': '#55ffff',
         'c': '#ff5555', 'd': '#ff55ff', 'e': '#ffff55', 'f': '#ffffff'
       };
-      const parts = String(text).split(/([§&][0-9a-fk-or])/gi);
-      let current = null;
-      for (const part of parts) {
-        const code = part.match(/^[§&]([0-9a-fk-or])$/i);
-        if (code) {
-          if (colors[code[1].toLowerCase()]) current = colors[code[1].toLowerCase()];
-          if (code[1].toLowerCase() === 'r') current = null;
-          continue;
-        }
-        if (!part) continue;
-        const node = document.createElement(current ? 'span' : 'span');
+    
+          // Split safely without dropping formatting modifiers
+          const parts = String(text).split(/([§&][0-9a-fr])/gi);
+          let currentColor = null;
+    
+          for (const part of parts) {
+            if (!part) continue;
+        
+        const match = part.match(/^[§&]([0-9a-fr])$/i);
+        if (match) {
+          const code = match[1].toLowerCase();
+              if (code === 'r') {
+                currentColor = null;
+              } else if (colors[code]) {
+                currentColor = colors[code];
+              }
+              continue;
+            }
+        
+        const node = document.createElement('span');
         node.textContent = part;
-        if (current) node.style.color = current;
+        if (currentColor) node.style.color = currentColor;
         
         element.appendChild(node);
       }

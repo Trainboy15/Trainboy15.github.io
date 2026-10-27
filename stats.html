@@ -127,35 +127,46 @@
 
     function renderStats(data) {
       playerTitle.replaceChildren();
-      shareButton.style.display = ''
+      shareButton.style.display = '';
       appendMinecraftText(playerTitle, data.name || 'Unknown player');
       resultSubtitle.textContent = 'Current recorded values';
       statsList.replaceChildren();
-      for (const stat of Array.isArray(data.stats) ? data.stats : []) {
+    
+      // Safeguard array iteration
+      const statsArray = Array.isArray(data.stats) ? data.stats : [];
+    
+      for (const stat of statsArray) {
         const item = document.createElement('div');
         item.className = 'stat';
+      
         const label = document.createElement('span');
         label.className = 'stat-key';
         label.textContent = formatStatName(stat.key);
+      
         const value = document.createElement('strong');
         value.className = 'stat-value';
         appendMinecraftText(value, formatDisplayValue(stat.key, stat.value));
+      
+        // Handle rank display logically
         if (stat.rank !== null && stat.rank !== undefined && stat.rank !== '') {
           const rank = document.createElement('small');
           rank.className = 'stat-rank';
-          if (typeof stat.rank === 'number') {
+        
+          if (stat.rank === '&7') {
+            appendMinecraftText(rank, '&7NONE');
+          } else if (typeof stat.rank === 'number') {
             rank.textContent = `#${stat.rank}`;
           } else {
             appendMinecraftText(rank, stat.rank);
           }
+          
           value.appendChild(rank);
         }
-        const rankStat = data.stats.find(stat => stat.key === "rank");
-        
-
+      
         item.append(label, value);
         statsList.appendChild(item);
       }
+    
       resultPanel.classList.remove('error');
       resultPanel.showModal();
     }

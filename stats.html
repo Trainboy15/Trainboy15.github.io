@@ -3,270 +3,370 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#07141c">
-    <link rel="icon" type="image/png" href="/favicon.png">
-  <meta name="description" content="Official stats api for SkyFrameSMP. Look up a player to view their stats!">
+  <meta name="theme-color" content="#141018">
+  <meta name="description" content="Look up SkyFrameSMP player stats, rankings, playtime, kills, deaths, and balance.">
   <meta property="og:type" content="website">
-<meta property="og:title" content="SkyFrameSMP Stats">
-<meta property="og:description" content="Type a player's username on our official database to view their live stats!">
-<meta property="og:image" content="https://skyframesmp.dev/assets/stats.png"> <!-- Use a clean 1200x630 banner -->
-<meta name="theme-color" content="#5865F2"> <!-- Changes the sidebar color of the Discord embed! -->
-  <title>SkyFrameSMP · Stats</title>
-  <link rel="stylesheet" href="style.css">
+  <meta property="og:title" content="SkyFrameSMP · Player Stats">
+  <meta property="og:description" content="Explore player stats and leaderboard positions on SkyFrameSMP.">
+  <link rel="icon" type="image/png" href="https://skyframesmp.dev/favicon.png">
+  <title>SkyFrameSMP · Player Stats</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #100d15;
+      --surface: #191520;
+      --surface-2: #211b2c;
+      --border: rgba(198, 166, 255, .13);
+      --primary: #7c3aed;
+      --primary-light: #b58aff;
+      --text: #f5f2fb;
+      --muted: #a9a1b8;
+      --green: #66e3a2;
+      --red: #ff8295;
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--text);
+      background: radial-gradient(ellipse at 75% -10%, rgba(124,58,237,.2), transparent 42%),
+                  radial-gradient(ellipse at 0% 40%, rgba(94,45,155,.12), transparent 36%), var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    .topbar {
+      width: min(1120px, calc(100% - 40px)); height: 76px; margin: auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: -.03em; }
+    .brand-mark { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; overflow: hidden; background: var(--surface-2); border: 1px solid var(--border); }
+    .brand-mark img { width: 100%; height: 100%; object-fit: cover; }
+    nav { display: flex; align-items: center; gap: 8px; }
+    nav a { color: var(--muted); padding: 10px 13px; border-radius: 10px; font-size: .9rem; transition: .18s ease; }
+    nav a:hover, nav a.active { color: var(--text); background: rgba(255,255,255,.055); }
+    .page { width: min(1000px, calc(100% - 40px)); margin: 0 auto; padding: 58px 0 70px; }
+    .intro { text-align: center; max-width: 650px; margin: 0 auto 32px; }
+    .eyebrow { color: var(--primary-light); font-size: .75rem; text-transform: uppercase; letter-spacing: .17em; font-weight: 800; margin: 0 0 15px; }
+    h1 { font-size: clamp(2.3rem, 6vw, 4rem); letter-spacing: -.065em; line-height: 1.02; margin: 0; }
+    h1 span { color: var(--primary-light); }
+    .intro-copy { color: var(--muted); line-height: 1.7; margin: 18px auto 0; max-width: 530px; }
+    .search-card { width: min(640px, 100%); margin: 30px auto 0; padding: 8px; display: flex; gap: 8px; border: 1px solid var(--border); border-radius: 15px; background: rgba(25,21,32,.9); box-shadow: 0 18px 60px rgba(0,0,0,.18); }
+    .search-icon { width: 42px; flex: 0 0 42px; display: grid; place-items: center; color: var(--muted); }
+    .search-input { min-width: 0; flex: 1; background: transparent; border: 0; outline: 0; color: var(--text); padding: 0 8px; }
+    .search-input::placeholder { color: #7e758d; }
+    .search-input:focus-visible { outline: 2px solid var(--primary-light); outline-offset: 3px; border-radius: 5px; }
+    .search-button { border: 0; border-radius: 10px; padding: 0 20px; min-height: 46px; color: white; background: linear-gradient(135deg, #8b45ef, #682bd0); font-weight: 750; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; transition: transform .18s, opacity .18s; }
+    .search-button:hover { transform: translateY(-1px); }
+    .search-button:disabled { opacity: .6; cursor: wait; transform: none; }
+    .hint { margin: 12px 0 0; color: #80768e; font-size: .82rem; text-align: center; min-height: 20px; }
+    .hint.error { color: var(--red); }
+    .profile { display: none; margin: 38px auto 0; animation: rise .28s ease both; }
+    .profile.visible { display: block; }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .profile-top { padding: 24px; display: flex; align-items: center; gap: 19px; border: 1px solid var(--border); border-radius: var(--radius); background: linear-gradient(115deg, rgba(124,58,237,.16), rgba(25,21,32,.96) 55%); }
+    .avatar { width: 76px; height: 76px; flex: 0 0 76px; object-fit: cover; image-rendering: pixelated; border-radius: 15px; background: var(--surface-2); border: 1px solid rgba(255,255,255,.12); }
+    .profile-info { flex: 1; min-width: 0; }
+    .profile-label { color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 800; margin: 0 0 7px; }
+    .profile-name-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .profile-name { margin: 0; font-size: clamp(1.5rem, 4vw, 2rem); letter-spacing: -.045em; overflow-wrap: anywhere; }
+    .rank-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: rgba(181,138,255,.13); color: var(--primary-light); border: 1px solid rgba(181,138,255,.2); font-size: .78rem; font-weight: 800; }
+    .profile-note { color: var(--muted); margin: 8px 0 0; font-size: .9rem; }
+    .profile-actions { display: flex; gap: 8px; }
+    .icon-button { width: 42px; height: 42px; flex: 0 0 42px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 12px; color: var(--muted); background: rgba(255,255,255,.035); cursor: pointer; }
+    .icon-button:hover { color: var(--text); border-color: rgba(181,138,255,.45); }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 28px 2px 14px; }
+    .section-head h2 { margin: 0; font-size: 1.1rem; letter-spacing: -.025em; }
+    .section-head p { color: var(--muted); font-size: .82rem; margin: 5px 0 0; }
+    .stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .stat-card { min-width: 0; padding: 20px; border: 1px solid var(--border); border-radius: 16px; background: linear-gradient(145deg, rgba(33,27,44,.92), rgba(25,21,32,.9)); transition: border-color .18s, transform .18s; }
+    .stat-card:hover { border-color: rgba(181,138,255,.32); transform: translateY(-2px); }
+    .stat-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .stat-label { color: var(--muted); font-size: .88rem; font-weight: 650; }
+    .stat-icon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; background: rgba(181,138,255,.11); color: var(--primary-light); }
+    .stat-value-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 9px; margin-top: 17px; }
+    .stat-value { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 850; letter-spacing: -.05em; overflow-wrap: anywhere; }
+    .leaderboard { color: var(--green); font-size: .76rem; font-weight: 800; background: rgba(102,227,162,.09); border: 1px solid rgba(102,227,162,.16); border-radius: 7px; padding: 4px 7px; }
+    .leaderboard.unranked { color: var(--muted); background: rgba(255,255,255,.04); border-color: var(--border); }
+    .empty-state { display: none; margin-top: 25px; padding: 24px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); text-align: center; color: var(--muted); }
+    footer { width: min(1000px, calc(100% - 40px)); margin: 0 auto; padding: 22px 0 30px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 15px; color: #786f85; font-size: .72rem; letter-spacing: .11em; font-weight: 750; }
+    .footer-dot { color: var(--primary-light); }
+    @media (max-width: 600px) {
+      .topbar { width: calc(100% - 28px); height: 68px; }
+      .brand { font-size: .92rem; gap: 8px; }
+      .brand-mark { width: 31px; height: 31px; }
+      nav { gap: 0; } nav a { padding: 9px 7px; font-size: .78rem; }
+      .page { width: calc(100% - 28px); padding: 44px 0 52px; }
+      .intro-copy { font-size: .92rem; }
+      .search-card { gap: 4px; }
+      .search-button { padding: 0 13px; }
+      .profile-top { padding: 17px; gap: 12px; align-items: flex-start; }
+      .avatar { width: 58px; height: 58px; flex-basis: 58px; border-radius: 12px; }
+      .profile-actions { margin-left: auto; }
+      .icon-button { width: 36px; height: 36px; flex-basis: 36px; }
+      .profile-note { font-size: .8rem; }
+      .stats-grid { gap: 10px; }
+      .stat-card { padding: 15px; }
+      .stat-icon { width: 31px; height: 31px; }
+      .stat-value { font-size: 1.45rem; }
+      .section-head { align-items: flex-start; flex-direction: column; gap: 3px; }
+      footer { width: calc(100% - 28px); font-size: .62rem; }
+    }
+    @media (max-width: 380px) {
+      nav a { padding: 8px 5px; font-size: .72rem; }
+      .profile-top { flex-wrap: wrap; }
+      .profile-info { flex-basis: calc(100% - 75px); }
+      .profile-actions { margin-left: auto; }
+      .stat-card { padding: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
 </head>
-<body class="stats-page">
+<body>
   <header class="topbar">
-    <a class="brand" href="/"><span class="brand-mark"><img src="/favicon.png" alt="S"></span>Skyframe SMP</a>
+    <a class="brand" href="/" aria-label="SkyFrameSMP home">
+      <span class="brand-mark"><img src="https://skyframesmp.dev/favicon.png" alt=""></span>
+      <span>SkyFrame<span style="color:var(--primary-light)">SMP</span></span>
+    </a>
     <nav aria-label="Main navigation">
-      <a href="#">Stats</a>
+      <a class="active" href="/stats.html" aria-current="page">Stats</a>
       <a href="https://skyframesmp.dev" target="_blank" rel="noreferrer">Website</a>
       <a href="https://discord.com/invite/GFsrYZqEGh" target="_blank" rel="noreferrer">Discord</a>
     </nav>
   </header>
 
   <main class="page">
-    <section class="hero" aria-labelledby="page-title">
-      <div>
-        <p class="eyebrow">Survival database / season five</p>
-        <h1 id="page-title">Know your<br><span style="color: var(--primary-light)">numbers.</span></h1>
-        <p class="hero-copy">Search the SkyFrameSMP player database and see the stats that make your time on the server count.</p>
-      </div>
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">Survival · Player database</p>
+      <h1 id="page-title">Your journey.<br><span>Your stats.</span></h1>
+      <p class="intro-copy">Look up any player to explore their SkyFrameSMP progress, server stats, and leaderboard positions.</p>
       <form class="search-card" id="search-form">
-        <label class="search-card-label" for="search-input">Look up a player</label>
-        <div class="search-wrapper">
-          <input class="search-input" id="search-input" type="text" placeholder="Username" autocomplete="off" required>
-          <button class="search-button" id="search-button" type="submit"><span>Search</span><span aria-hidden="true">&#8599;</span></button>
-        </div>
-        <p class="search-hint">Press enter to search the live database</p>
-        <p class="status" id="status" role="status" aria-live="polite"></p>
+        <span class="search-icon" aria-hidden="true">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
+        </span>
+        <input class="search-input" id="search-input" type="text" placeholder="Enter a Minecraft username…" autocomplete="off" maxlength="16" required aria-label="Minecraft username">
+        <button class="search-button" id="search-button" type="submit"><span id="button-label">Search</span><span aria-hidden="true">↗</span></button>
       </form>
+      <p class="hint" id="status" role="status" aria-live="polite">Enter a username to view their profile.</p>
     </section>
-    <dialog class="result-panel" id="result-panel" aria-labelledby="player-title">
-      <div class="result-heading">
-        <div><p class="result-tag">Player profile</p><br><h2 id="player-title">Player stats</h2><p id="result-subtitle">Current recorded values</p></div>
-        <div class="dialog-actions">
-        <button class="dialog-close" id="share-card" type="button" aria-label="Make share code"><svg xmlns="http://w3.org" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <circle cx="18" cy="5" r="3" />
-  <circle cx="6" cy="12" r="3" />
-  <circle cx="18" cy="19" r="3" />
-  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-</svg>
-</button>
-        <button class="dialog-close" id="dialog-close" type="button" aria-label="Close player profile">&times;</button>
+
+    <section class="profile" id="profile" aria-live="polite" aria-label="Player profile">
+      <div class="profile-top">
+        <img class="avatar" id="player-avatar" src="https://minotar.net/helm/Steve/96.png" alt="Minecraft player avatar">
+        <div class="profile-info">
+          <p class="profile-label">Player profile</p>
+          <div class="profile-name-row">
+            <h2 class="profile-name" id="player-title">Player</h2>
+            <span class="rank-badge" id="rank-badge">No Rank</span>
+          </div>
+          <p class="profile-note" id="result-subtitle">Current recorded values</p>
         </div>
+        <div class="profile-actions">
+          <button class="icon-button" id="share-button" type="button" aria-label="Copy player profile link" title="Copy profile link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4m0-11-6.8 4"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="section-head">
+        <div><h2>Player statistics</h2><p>Your current progress at a glance</p></div>
+        <p id="stat-count">0 stats</p>
       </div>
       <div class="stats-grid" id="stats-list"></div>
-      <div class="result-heading">
-      </div>
-    </dialog>
+    </section>
+    <div class="empty-state" id="empty-state"></div>
   </main>
-  <footer>SKYFRAMESMP <span aria-hidden="true">/</span> PLAYER STATISTICS</footer>
+
+  <footer><span>SKYFRAMESMP <span class="footer-dot">/</span> PLAYER STATS</span><span>RULE THE SKY</span></footer>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentPlayer = urlParams.get('player');
     const form = document.getElementById('search-form');
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
+    const buttonLabel = document.getElementById('button-label');
     const status = document.getElementById('status');
-    const resultPanel = document.getElementById('result-panel');
+    const profile = document.getElementById('profile');
     const statsList = document.getElementById('stats-list');
     const playerTitle = document.getElementById('player-title');
-    const resultSubtitle = document.getElementById('result-subtitle');
-    const shareButton = document.getElementById('share-card');
-    const dialogClose = document.getElementById('dialog-close');
+    const rankBadge = document.getElementById('rank-badge');
+    const avatar = document.getElementById('player-avatar');
+    const subtitle = document.getElementById('result-subtitle');
+    const shareButton = document.getElementById('share-button');
+    const statCount = document.getElementById('stat-count');
 
-    dialogClose.addEventListener('click', () => resultPanel.close());
-    resultPanel.addEventListener('click', (event) => {
-      if (event.target === resultPanel) resultPanel.close();
-    });
+    const statMeta = {
+      playtime: { label: 'Playtime', icon: '◷', description: 'Time spent on the server' },
+      playtimeMinutes: { label: 'Playtime', icon: '◷', description: 'Time spent on the server' },
+      totalPlaytime: { label: 'Playtime', icon: '◷', description: 'Time spent on the server' },
+      kills: { label: 'Kills', icon: '⚔', description: 'Players defeated' },
+      deaths: { label: 'Deaths', icon: '✕', description: 'Times defeated' },
+      money: { label: 'Balance', icon: '$', description: 'In-game currency' },
+      balance: { label: 'Balance', icon: '$', description: 'In-game currency' },
+      dollars: { label: 'Balance', icon: '$', description: 'In-game currency' },
+      cash: { label: 'Balance', icon: '$', description: 'In-game currency' }
+    };
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', event => {
       event.preventDefault();
       lookUp(searchInput.value.trim());
     });
-    if (currentPlayer) {
-      lookUp(currentPlayer);
-    }
-    shareButton.addEventListener("click", (event) => {
-      copyShareCode("https://skyframesmp.dev/stats?player="+searchInput.value)
-      document.querySelector('meta[name="description"]').setAttribute('content', `Stats for: ${searchInput.value}`);
-    });
-    async function copyShareCode(code) {
+
+    shareButton.addEventListener('click', async () => {
+      const url = new URL(window.location.href);
+      url.searchParams.set('player', playerTitle.textContent);
       try {
-       await navigator.clipboard.writeText(code);
-      } catch (err) {
-       console.error('Failed to copy text: ', err);
+        await navigator.clipboard.writeText(url.toString());
+        status.textContent = 'Profile link copied to clipboard.';
+        status.classList.remove('error');
+      } catch {
+        status.textContent = 'Could not copy automatically. Copy this page URL from your browser.';
       }
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const initialPlayer = params.get('player');
+    if (initialPlayer) {
+      searchInput.value = initialPlayer;
+      lookUp(initialPlayer);
     }
 
     async function lookUp(playerName) {
       if (!playerName) return;
+      if (!/^[A-Za-z0-9_]{1,16}$/.test(playerName)) {
+        showError('Use a valid Minecraft username (1–16 letters, numbers, or underscores).');
+        return;
+      }
       searchButton.disabled = true;
-      searchButton.querySelector('span').textContent = 'Searching';
-      status.textContent = '';
-      resultPanel.classList.remove('visible', 'error');
+      buttonLabel.textContent = 'Searching…';
+      status.textContent = 'Looking up player stats…';
+      status.classList.remove('error');
+      profile.classList.remove('visible');
       try {
         const response = await fetch(`https://api.skyframesmp.dev/stats/${encodeURIComponent(playerName)}`);
-        if (!response.ok) throw new Error(response.status === 404 ? 'Player not found.' : 'The stats service is unavailable.');
-        renderStats(await response.json());
+        if (!response.ok) {
+          if (response.status === 404) throw new Error('Player not found. Check the username and try again.');
+          throw new Error('The stats service is temporarily unavailable. Try again in a moment.');
+        }
+        const data = await response.json();
+        if (!data || !Array.isArray(data.stats)) throw new Error('The stats service returned an unexpected response.');
+        renderStats(data);
+        const url = new URL(window.location.href);
+        url.searchParams.set('player', data.name || playerName);
+        window.history.replaceState({}, '', url);
+        status.textContent = `Showing stats for ${data.name || playerName}.`;
       } catch (error) {
-        status.textContent = error.message;
-        resultPanel.classList.add('error');
-        playerTitle.textContent = 'No results';
-        shareButton.style.display = 'none'
-        resultSubtitle.textContent = 'Try checking the spelling and search again.';
-        statsList.replaceChildren();
-        resultPanel.showModal();
+        showError(error.message || 'Something went wrong while loading stats.');
       } finally {
         searchButton.disabled = false;
-        searchButton.querySelector('span').textContent = 'Search';
+        buttonLabel.textContent = 'Search';
       }
+    }
+
+    function showError(message) {
+      profile.classList.remove('visible');
+      status.textContent = message;
+      status.classList.add('error');
     }
 
     function renderStats(data) {
-      playerTitle.replaceChildren();
-      shareButton.style.display = '';
+      const name = String(data.name || searchInput.value.trim() || 'Unknown');
+      playerTitle.textContent = name;
+      avatar.src = `https://minotar.net/helm/${encodeURIComponent(name)}/96.png`;
+      avatar.alt = `${name}'s Minecraft avatar`;
+      avatar.onerror = () => { avatar.onerror = null; avatar.src = 'https://minotar.net/helm/Steve/96.png'; };
 
-      // 1. Find and extract the rank object from the array
-      const statsArray = Array.isArray(data.stats) ? [...data.stats] : [];
-      const rankIndex = statsArray.findIndex(stat => stat.key === "rank");
+      const stats = [...data.stats];
+      const rankIndex = stats.findIndex(stat => String(stat.key).toLowerCase() === 'rank');
+      const rankStat = rankIndex >= 0 ? stats.splice(rankIndex, 1)[0] : null;
+      const rawRank = rankStat ? String(rankStat.value ?? '').trim() : '';
+      const cleanRank = stripMinecraftFormatting(rawRank);
+      const isNoRank = !cleanRank || cleanRank.toLowerCase() === 'none' || rawRank === '&7' || rawRank === '§7';
+      rankBadge.textContent = isNoRank ? 'No Rank' : cleanRank;
+      rankBadge.style.display = 'inline-flex';
 
-      let playerRankText = '&7NONE'; // Default fallback
-      if (rankIndex !== -1) {
-        const rankObj = statsArray[rankIndex];
-        // If the value is just '&7' or empty, default to gray NONE
-        if (rankObj.value && rankObj.value !== '&7') {
-          playerRankText = rankObj.value;
-        }
-        // Remove it from the array so it doesn't render as a standard stat row
-        statsArray.splice(rankIndex, 1); 
-      }
-    
-      // 2. Render Player Title + Rank Badge
-      appendMinecraftText(playerTitle, data.name || 'Unknown player');
-      const rankBadge = document.createElement('small');
-      rankBadge.className = 'player-rank-badge';
-      appendMinecraftText(rankBadge, ` [${playerRankText}]`);
-      playerTitle.appendChild(rankBadge);
-    
-      resultSubtitle.textContent = 'Current recorded values';
       statsList.replaceChildren();
-    
-      // 3. Render the remaining leaderboard stats
-      for (const stat of statsArray) {
-        const item = document.createElement('div');
-        item.className = 'stat';
-      
-        const label = document.createElement('span');
-        label.className = 'stat-key';
-        label.textContent = formatStatName(stat.key);
-      
-        const value = document.createElement('strong');
-        value.className = 'stat-value';
-        appendMinecraftText(value, formatDisplayValue(stat.key, stat.value));
-      
-        // Append leaderboard numerical positions if they exist
-        if (stat.rank !== null && stat.rank !== undefined && stat.rank !== '') {
-          const rankElement = document.createElement('small');
-          rankElement.className = 'stat-rank';
-          rankElement.textContent = `#${stat.rank}`;
-          value.appendChild(rankElement);
-        }
-      
-        item.append(label, value);
-        statsList.appendChild(item);
+      const visibleStats = stats.filter(stat => stat && stat.key);
+      statCount.textContent = `${visibleStats.length} ${visibleStats.length === 1 ? 'stat' : 'stats'}`;
+
+      if (!visibleStats.length) {
+        const empty = makeElement('div', 'stat-card');
+        empty.textContent = 'No statistics have been recorded for this player yet.';
+        statsList.appendChild(empty);
       }
-    
-      resultPanel.classList.remove('error');
-      resultPanel.showModal();
+
+      for (const stat of visibleStats) {
+        const key = String(stat.key);
+        const meta = statMeta[key] || { label: formatStatName(key), icon: '✦', description: 'Recorded player statistic' };
+        const card = makeElement('article', 'stat-card');
+        const top = makeElement('div', 'stat-top');
+        const label = makeElement('span', 'stat-label', meta.label);
+        const icon = makeElement('span', 'stat-icon', meta.icon);
+        icon.setAttribute('aria-hidden', 'true');
+        top.append(label, icon);
+
+        const valueRow = makeElement('div', 'stat-value-row');
+        const value = makeElement('strong', 'stat-value', formatDisplayValue(key, stat.value));
+        valueRow.appendChild(value);
+
+        const hasRank = stat.rank !== null && stat.rank !== undefined && stat.rank !== '';
+        const position = makeElement('span', `leaderboard${hasRank ? '' : ' unranked'}`, hasRank ? `#${stat.rank} on leaderboard` : 'Unranked');
+        valueRow.appendChild(position);
+
+        const description = makeElement('div', 'stat-label');
+        description.style.marginTop = '10px';
+        description.style.fontSize = '.78rem';
+        description.textContent = meta.description;
+        card.append(top, valueRow, description);
+        statsList.appendChild(card);
+      }
+
+      subtitle.textContent = 'Current recorded values · updated from the live stats API';
+      profile.classList.add('visible');
+      profile.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function makeElement(tag, className, text) {
+      const element = document.createElement(tag);
+      if (className) element.className = className;
+      if (text !== undefined) element.textContent = text;
+      return element;
+    }
+
+    function stripMinecraftFormatting(value) {
+      return String(value ?? '')
+        .replace(/[§&][0-9a-fk-or]/gi, '')
+        .replace(/§x(?:§[0-9a-f]){6}/gi, '')
+        .replace(/\s+/g, ' ')
+        .trim();
     }
 
     function formatDisplayValue(key, value) {
+      const normalizedKey = String(key).toLowerCase();
       const numericValue = Number(value);
-      if (!Number.isFinite(numericValue)) return String(value ?? '');
-
-      if (key === 'playtime' || key === 'playtimeMinutes' || key === 'totalPlaytime') {
-        return formatPlaytimeMinutes(numericValue);
+      if (value === null || value === undefined || value === '') return '—';
+      if (!Number.isFinite(numericValue)) return stripMinecraftFormatting(String(value));
+      if (['playtime', 'playtimeminutes', 'totalplaytime'].includes(normalizedKey)) return formatPlaytimeMinutes(numericValue);
+      if (['money', 'balance', 'dollars', 'cash'].includes(normalizedKey)) {
+        return '$' + new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(numericValue);
       }
-
-      if (key === 'money' || key === 'balance' || key === 'dollars' || key === 'cash') {
-        return formatMoney(numericValue);
-      }
-
-      return String(value ?? '');
+      return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(numericValue);
     }
 
     function formatPlaytimeMinutes(minutes) {
-      const totalMinutes = Math.max(0, Math.floor(Number(minutes) || 0));
-      const days = Math.floor(totalMinutes / (60 * 24));
-      const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
-      const mins = totalMinutes % 60;
-      return `${days}d ${hours}h ${mins}m`;
-    }
-
-    function formatMoney(value) {
-      const amount = Number(value) || 0;
-      const absolute = Math.abs(amount);
-
-      if (absolute >= 1_000_000) {
-        const scaled = amount / 1_000_000;
-        return `${trimTrailingZeros(scaled)}m`;
-      }
-
-      if (absolute >= 1_000) {
-        const scaled = amount / 1_000;
-        return `${trimTrailingZeros(scaled)}k`;
-      }
-
-      return `${Math.round(amount)}`;
-    }
-
-    function trimTrailingZeros(number) {
-      return Number(number.toFixed(1)).toString();
+      const total = Math.max(0, Math.floor(minutes));
+      const days = Math.floor(total / 1440);
+      const hours = Math.floor((total % 1440) / 60);
+      const mins = total % 60;
+      if (days) return `${days}d ${hours}h`;
+      if (hours) return `${hours}h ${mins}m`;
+      return `${mins}m`;
     }
 
     function formatStatName(key) {
       return String(key)
         .replace(/([a-z])([A-Z])/g, '$1 $2')
         .replace(/[_-]+/g, ' ')
-        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+        .replace(/\b\w/g, letter => letter.toUpperCase());
     }
-
-    function appendMinecraftText(element, text) {
-  const colors = {
-    '0': '#000000', '1': '#0000aa', '2': '#00aa00', '3': '#00aaaa',
-    '4': '#aa0000', '5': '#aa00aa', '6': '#ffaa00', '7': '#aaaaaa',
-    '8': '#555555', '9': '#5555ff', 'a': '#55ff55', 'b': '#55ffff',
-    'c': '#ff5555', 'd': '#ff55ff', 'e': '#ffff55', 'f': '#ffffff'
-  };
-
-  // Split safely without dropping formatting modifiers
-  const parts = String(text).split(/([§&][0-9a-fr])/gi);
-  let currentColor = null;
-
-  for (const part of parts) {
-    if (!part) continue;
-
-    const match = part.match(/^[§&]([0-9a-fr])$/i);
-    if (match) {
-      const code = match[1].toLowerCase();
-      if (code === 'r') {
-        currentColor = null;
-      } else if (colors[code]) {
-        currentColor = colors[code];
-      }
-      continue;
-    }
-
-    const node = document.createElement('span');
-    node.textContent = part;
-    if (currentColor) node.style.color = currentColor;
-    
-    element.appendChild(node);
-  }
-}
   </script>
 </body>
 </html>

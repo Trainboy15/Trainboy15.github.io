@@ -150,6 +150,9 @@
           }
           value.appendChild(rank);
         }
+        const rankStat = data.stats.find(stat => stat.key === "rank");
+        
+
         item.append(label, value);
         statsList.appendChild(item);
       }
@@ -226,8 +229,10 @@
         }
         if (!part) continue;
         const node = document.createElement(current ? 'span' : 'span');
+        if (element === rank & text === '&7') node.textContent = 'NONE'
         node.textContent = part;
         if (current) node.style.color = current;
+        
         element.appendChild(node);
       }
     }

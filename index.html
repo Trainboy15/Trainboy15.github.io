@@ -66,9 +66,7 @@
 
     <!-- Discord Profile Summary Box -->
     <section class="discord-section" id="discord-section">
-        <h2>Discord Community</h2>
-        <p id="discord-stats" class="stats-loading">Fetching community metrics...</p>
-        <a class="btn-primary" href="https://discord.gg/GFsrYZqEGh" target="_blank" rel="noopener noreferrer">Join Now</a>
+        <iframe src="https://discord.com/widget?id=1394822336967868416&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
     </section>
 
     <!-- Feature Information Strip -->
@@ -94,19 +92,6 @@
 
     <!-- Scripts -->
     <script src="main.js"></script>
-    <script>
-        (async () => {
-            try {
-                const res = await fetch('https://discord.com/api/v9/invites/GFsrYZqEGh?with_counts=true');
-                if (!res.ok) throw new Error('API down');
-                const data = await res.json();
-                const members = data.approximate_member_count ?? 0;
-                const online = data.approximate_presence_count ?? 0;
-                document.getElementById('discord-stats').textContent = `${members.toLocaleString()} members | ${online.toLocaleString()} online`;
-            } catch (err) {
-                document.getElementById('discord-stats').textContent = "Join our active Discord community!";
-            }
-        })();
-    </script>
+
 </body>
 </html>
